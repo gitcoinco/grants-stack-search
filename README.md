@@ -6,6 +6,8 @@ $ cd search-spike
 $ poetry install
 ```
 
+**Note**: installation might currently be broken on some systems, see https://github.com/python-poetry/poetry/issues/8458.
+
 ## Setup
 
 Copy `.env.example` to `.env`, then download `projects.json` and set the `PROJECTS_JSON_PATH` accordingly:
