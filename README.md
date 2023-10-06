@@ -12,7 +12,7 @@ Copy `.env.example` to `.env`, then download `projects.json` and set the `PROJEC
 
 ```sh
 $ cp .env.example .env
-$ wget https://indexer-staging.fly.dev/data/1/projects.json /tmp/projects.json
+$ wget -O /tmp/projects.json https://indexer-staging.fly.dev/data/1/projects.json
 $ echo 'PROJECTS_JSON_PATH=/tmp/projects.json' >>.env
 ```
 
