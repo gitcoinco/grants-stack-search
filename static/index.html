@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@picocss/pico@1.5.7/css/pico.min.css"
+    />
+    <title>Projects</title>
+    <script src="https://unpkg.com/nunjucks@3.1.7/browser/nunjucks.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.8.5"></script>
+    <script src="https://unpkg.com/htmx.org@1.8.5/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.8.5/dist/ext/json-enc.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.8.5/dist/ext/debug.js"></script>
+
+    <style type="text/css">
+      .grid > article {
+        height: 20rem;
+        overflow: hidden;
+        font-size: 12px;
+        position: relative;
+      }
+
+      article > header {
+        background-size: cover;
+      }
+
+      .grid > article > header {
+        margin-bottom: 2rem;
+      }
+
+      article .fade-out {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        margin: 0;
+        padding: 40px 0;
+        background-image: linear-gradient(to bottom, transparent, #fff);
+      }
+    </style>
+  </head>
+
+  <body hx-ext="client-side-templates">
+    <main class="container">
+      <section>
+        <input
+          autofocus
+          name="q"
+          placeholder="Search..."
+          autocomplete="off"
+          hx-get="/search"
+          hx-trigger="keyup changed delay:0.5s"
+          hx-target="#projects"
+          nunjucks-template="project-list-tmpl"
+        />
+
+        <div>
+          Try:
+
+          <a
+            href="#"
+            hx-get="/search?q=open+source"
+            hx-target="#projects"
+            nunjucks-template="project-list-tmpl"
+          >
+            open source</a
+          >,
+
+          <a
+            href="#"
+            hx-get="/search?q=AI"
+            hx-target="#projects"
+            nunjucks-template="project-list-tmpl"
+          >
+            AI</a
+          >,
+
+          <a
+            href="#"
+            hx-get="/search?q=public+goods"
+            hx-target="#projects"
+            nunjucks-template="project-list-tmpl"
+          >
+            public goods</a
+          >,
+
+          <a
+            href="#"
+            hx-get="/search?q=nft"
+            hx-target="#projects"
+            nunjucks-template="project-list-tmpl"
+          >
+            NFTs</a
+          >,
+
+          <a
+            href="#"
+            hx-get="/search?q=education"
+            hx-target="#projects"
+            nunjucks-template="project-list-tmpl"
+          >
+            education</a
+          >
+        </div>
+
+        <div id="projects"></div>
+      </section>
+
+      <template id="project-list-tmpl">
+        {% if results | length %}
+        <div class="grid">
+          {% for p in results %}
+          <article>
+            <header
+              style="background-image: url({{ p.banner_image_url }})"
+            ></header>
+            <h5>
+              <a
+                href="#"
+                hx-get="/projects/{{ p.id }}"
+                hx-target="#project"
+                nunjucks-template="project-tmpl"
+              >
+                {{ p.name }}
+              </a>
+            </h5>
+            <div>{{ p.description }}</div>
+            <div class="fade-out"></div>
+          </article>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div id="project"></div>
+      </template>
+
+      <template id="project-tmpl">
+        <article>
+          <header
+            style="background-image: url({{ banner_image_url }}); height: 15rem;"
+          ></header>
+
+          <h2>{{ name }}</h2>
+
+          <div>{{ description_html | safe }}</div>
+        </article>
+
+        <h3 style="text-align: center">Explore Similar Projects</h3>
+        <div
+          hx-trigger="load"
+          hx-get="/search?q={{ description }}"
+          nunjucks-template="project-list-tmpl"
+        ></div>
+      </template>
+    </main>
+  </body>
+</html>
