@@ -3,4 +3,5 @@ __pycache__
 .venv
 .project
 .var
-
+.pytest_cache
+fly.toml
