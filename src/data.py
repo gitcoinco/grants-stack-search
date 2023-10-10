@@ -1,6 +1,7 @@
+from typing import List
 import logging
-import os
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
+from langchain.schema import Document
 from langchain.vectorstores import Chroma
 from langchain.document_loaders import JSONLoader
 from langchain.chains import RetrievalQA
@@ -11,7 +12,30 @@ from langchain.document_loaders import JSONLoader
 from langchain.indexes import VectorstoreIndexCreator
 
 
-JQ_SCHEMA = ".[] | { id, name: .metadata.title, website_url: .metadata.website, description: .metadata.description, banner_image_cid: .metadata.bannerImg }"
+def load_projects_json(projects_json_path: str) -> List[Document]:
+    def is_valid_document(doc: Document) -> bool:
+        # TODO use pydantic
+        if (
+            doc.metadata.get("project_id") is not None
+            and doc.metadata.get("name") is not None
+            and doc.metadata.get("website_url") is not None
+            and doc.page_content is not None
+        ):
+            return True
+        else:
+            return False
+
+    loader = JSONLoader(
+        file_path=projects_json_path,
+        jq_schema=".[] | { id, name: .metadata.title, website_url: .metadata.website, description: .metadata.description, banner_image_cid: .metadata.bannerImg }",
+        content_key="description",
+        metadata_func=get_json_document_metadata,
+        text_content=False,
+    )
+
+    documents = list(filter(is_valid_document, loader.load()))
+
+    return documents
 
 
 def get_json_document_metadata(record: dict, metadata: dict) -> dict:
@@ -24,16 +48,9 @@ def get_json_document_metadata(record: dict, metadata: dict) -> dict:
     return metadata
 
 
-def load_project_dataset_into_chroma_db(projects_file_path: str) -> Chroma:
-    loader = JSONLoader(
-        file_path=projects_file_path,
-        jq_schema=JQ_SCHEMA,
-        content_key="description",
-        metadata_func=get_json_document_metadata,
-        text_content=False,
-    )
-    logging.debug(f"loading {os.path.basename(projects_file_path)}...")
-    documents = loader.load()
+def load_project_dataset_into_chroma_db(projects_json_path: str) -> Chroma:
+    logging.debug(f"loading {projects_json_path}...")
+    documents = load_projects_json(projects_json_path)
 
     logging.debug("indexing...")
     db = Chroma.from_documents(
@@ -45,34 +62,21 @@ def load_project_dataset_into_chroma_db(projects_file_path: str) -> Chroma:
 
 
 def load_project_dataset_into_vectorstore(
-    projects_file_path: str,
+    projects_json_path: str,
 ) -> VectorStoreIndexWrapper:
-    loader = JSONLoader(
-        file_path=projects_file_path,
-        jq_schema=JQ_SCHEMA,
-        content_key="description",
-        metadata_func=get_json_document_metadata,
-        text_content=False,
-    )
-    logging.debug(f"loading {os.path.basename(projects_file_path)}...")
+    logging.debug(f"loading {projects_json_path}...")
+    documents = load_projects_json(projects_json_path)
 
-    index = VectorstoreIndexCreator().from_loaders([loader])
-
+    index = VectorstoreIndexCreator().from_documents(documents)
     return index
 
 
-def get_qa_chain(project_file_path: str) -> BaseRetrievalQA:
-    logging.debug(f"creating index from {project_file_path} ...")
-    index = VectorstoreIndexCreator().from_loaders(
-        [
-            JSONLoader(
-                file_path=project_file_path,
-                jq_schema=JQ_SCHEMA,
-                content_key="description",
-                metadata_func=get_json_document_metadata,
-            )
-        ]
-    )
+def get_qa_chain(projects_json_path: str) -> BaseRetrievalQA:
+    logging.debug(f"loading {projects_json_path}...")
+    documents = load_projects_json(projects_json_path)
+
+    logging.debug(f"creating index from {projects_json_path} ...")
+    index = VectorstoreIndexCreator().from_documents(documents)
 
     logging.debug("constructing qa chain")
     chain = RetrievalQA.from_chain_type(

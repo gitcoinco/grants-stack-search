@@ -12,7 +12,7 @@ from pprint import pprint
 # NOTE: these are not real tests, we're using pytest as a testbed.
 
 
-@pytest.mark.only
+@pytest.mark.skip
 def test_experiment_similarity_search_with_chroma_db(chroma_db: Chroma):
     query = "education"
     docs = chroma_db.similarity_search(query)
