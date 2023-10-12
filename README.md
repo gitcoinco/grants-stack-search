@@ -6,7 +6,7 @@ $ cd search-spike
 $ poetry install
 ```
 
-**Note**: installation might currently be broken on some systems, see https://github.com/python-poetry/poetry/issues/8458.
+**Note**: installation might currently be broken on some systems, see https://github.com/python-poetry/poetry/issues/8458 for workarounds.
 
 ## Setup
 
