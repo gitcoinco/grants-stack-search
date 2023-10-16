@@ -516,16 +516,6 @@ typing-inspect = ">=0.4.0"
 dev = ["flake8", "hypothesis", "ipython", "mypy (>=0.710)", "portray", "pytest (>=7.2.0)", "setuptools", "simplejson", "twine", "types-dataclasses", "wheel"]
 
 [[package]]
-name = "docopt"
-version = "0.6.2"
-description = "Pythonic argument parser, that will make you smile"
-optional = false
-python-versions = "*"
-files = [
-    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
-]
-
-[[package]]
 name = "fastapi"
 version = "0.103.2"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -1064,6 +1054,24 @@ python-versions = "*"
 files = [
     {file = "lit-17.0.1.tar.gz", hash = "sha256:44867ae576b5790567b120bc3f0d9f021dac9424d1b0840c75acd85f4610ac04"},
 ]
+
+[[package]]
+name = "lunr"
+version = "0.7.0.post1"
+description = "A Python implementation of Lunr.js"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "lunr-0.7.0.post1-py3-none-any.whl", hash = "sha256:77cce585d195d412cff362698799c9571ff3e285fc6bd8816ecbc9ec82dbb368"},
+    {file = "lunr-0.7.0.post1.tar.gz", hash = "sha256:00fc98f59b53c7ee0f6384c99e6c099f28cb746ecfff865bbc3705c3e9104bda"},
+]
+
+[package.extras]
+dev = ["lunr[docs,local,tests]"]
+docs = ["furo", "myst-parser", "sphinx", "sphinx-autobuild"]
+languages = ["nltk"]
+local = ["black", "build", "flake8", "hatch-fancy-pypi-readme", "ipython", "mypy", "pdbpp", "pytest-benchmark", "twine", "wheel"]
+tests = ["coverage", "lunr[languages]", "pytest", "pytest-timeout", "tox"]
 
 [[package]]
 name = "markdown"
@@ -2184,20 +2192,18 @@ files = [
 pytest = {version = ">=7.1", markers = "python_version >= \"3.7\" and python_version < \"4.0\""}
 
 [[package]]
-name = "pytest-watch"
-version = "4.2.0"
-description = "Local continuous test runner with pytest and watchdog."
+name = "pytest-watcher"
+version = "0.3.4"
+description = "Automatically rerun your tests on file modifications"
 optional = false
-python-versions = "*"
+python-versions = ">=3.7.0,<4.0.0"
 files = [
-    {file = "pytest-watch-4.2.0.tar.gz", hash = "sha256:06136f03d5b361718b8d0d234042f7b2f203910d8568f63df2f866b547b3d4b9"},
+    {file = "pytest_watcher-0.3.4-py3-none-any.whl", hash = "sha256:edd2bd9c8a1fb14d48c9f4947234065eb9b4c1acedc0bf213b1f12501dfcffd3"},
+    {file = "pytest_watcher-0.3.4.tar.gz", hash = "sha256:d39491ba15b589221bb9a78ef4bed3d5d1503aed08209b1a138aeb95b9117a18"},
 ]
 
 [package.dependencies]
-colorama = ">=0.3.3"
-docopt = ">=0.4.0"
-pytest = ">=2.6.4"
-watchdog = ">=0.6.0"
+watchdog = ">=2.0.0"
 
 [[package]]
 name = "python-dateutil"
@@ -3624,4 +3630,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d9e8487db6a0048afeadcc599632dc72cee3f1e819958bdb0add03b039346d4c"
+content-hash = "a403422875e86dcfccf72e7366c0c5cc6f148e0cfa5f39cb38bcb8faaf416c5a"

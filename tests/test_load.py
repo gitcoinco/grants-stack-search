@@ -68,25 +68,26 @@ def test_ignore_document_without_title(tmp_path: pathlib.Path):
     assert len(documents) == 0
 
 
-# def test_ignore_document_without_description(tmp_path: pathlib.Path):
-#     projects_json = tmp_path / "projects.json"
-#     projects_json.write_text(
-#         json.dumps(
-#             [
-#                 {
-#                     "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
-#                     "metadata": {
-#                         "title": "Foo",
-#                         "website": "https://example.com/foo",
-#                         "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
-#                     },
-#                 }
-#             ]
-#         )
-#     )
+@pytest.mark.skip(reason="we probably don't want this")
+def test_ignore_document_without_description(tmp_path: pathlib.Path):
+    projects_json = tmp_path / "projects.json"
+    projects_json.write_text(
+        json.dumps(
+            [
+                {
+                    "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
+                    "metadata": {
+                        "title": "Foo",
+                        "website": "https://example.com/foo",
+                        "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
+                    },
+                }
+            ]
+        )
+    )
 
-#     documents = load_projects_json(str(projects_json))
-#     assert len(documents) == 0
+    documents = load_projects_json(str(projects_json))
+    assert len(documents) == 0
 
 
 def test_ignore_document_without_website(tmp_path: pathlib.Path):

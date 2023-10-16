@@ -24,12 +24,13 @@ mdx-linkify = "^2.1"
 pydantic = "^2.4.2"
 pydantic-settings = "^2.0.3"
 chromadb = "^0.4.13"
+lunr = "^0.7.0.post1"
+pytest-watcher = "^0.3.4"
 
 
 [tool.poetry.group.dev.dependencies]
 taskipy = "^1.12.0"
 pytest = "^7.4.1"
-pytest-watch = "^4.2.0"
 syrupy = "^4.5.0"
 mypy = "^1.5.1"
 chromadb = "^0.4.8"
@@ -40,7 +41,7 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.taskipy.tasks]
-test_watch = "ptw --clear -- --capture=no -vv"
+test_watch = "ptw . -- --capture=no -vv"
 watch_run_cli = "watchexec -r -w=src --clear=clear 'python src/cli.py'"
 watch_run_app = "uvicorn src.app:app --reload"
 
@@ -51,3 +52,6 @@ ignore = []
 defineConstant = { DEBUG = true }
 
 [tool.black]
+
+[tool.pytest-watcher]
+now = true

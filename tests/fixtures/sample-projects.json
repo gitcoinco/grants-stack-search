@@ -1,0 +1,596 @@
+[
+  {
+    "id": "0x6ec5ee60255a3593d5b35b46f53b02adef97afb5ecf996aa04673ac7a1a3ba57",
+    "projectNumber": 0,
+    "metaPtr": "bafkreicj2mfcotvh4tcg2yxivox3udf3nn2ac73jx4untgdgqpvnnaz2ui",
+    "metadata": {
+      "title": "Pharo",
+      "description": "A web3 automated market maker for wisdom of crowds algorithm.",
+      "website": "https://pharo.tech",
+      "projectTwitter": "PharoACM",
+      "userGithub": "codenamejason",
+      "projectGithub": "PharoACM",
+      "logoImg": "bafybeidmdlaik4w5a7q7piwjavxllm5hw33i2c7xlgs2oavj7sp24efe7a",
+      "bannerImg": "bafkreieem7euzclgl5k45jvvzqbbwiwvqdjwe42z3xbnkvzyxuruxvv47a",
+      "bannerImgData": {},
+      "logoImgData": {},
+      "credentials": {
+        "github": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0xA4ca1b15fE81F57cb2d3f686c7B13309906cd37B",
+            "hash": "v0.0.0:bMyi7Uksi8ymgRuA4PxSpq0lQ2Hj/lcElW/QNla9JyQ=",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "provider": "ClearTextGithubOrg#PharoACM#9419140"
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2022-11-29T16:14:03.332Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2022-11-29T16:14:03.332Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..NYYPRRjymDNgm1wtdHTJyM5-YWy6i5fKT7ItHV56YB6Ud5KtxeUct0Rm7QWGpLxr-HATEZzPxXXCzGuYqDU0AA"
+          },
+          "expirationDate": "2023-02-27T16:14:03.332Z"
+        },
+        "twitter": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0xA4ca1b15fE81F57cb2d3f686c7B13309906cd37B",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "hash": "v0.0.0:tGyqub6dyESm7zxBPmum2WBCjOwQc9nUhLrybD8RdCk=",
+            "provider": "ClearTextTwitter#PharoACM"
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2022-11-29T16:13:27.820Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2022-11-29T16:13:27.820Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..Gy8SPxkxM_oVMLtX96BQHtbjSS91NwOL3vwqY90LoNmKz0aUlbbucb3KUrQYvjJac_aHXn-QjUC9WMrNsSObAA"
+          },
+          "expirationDate": "2023-02-27T16:13:27.820Z"
+        }
+      }
+    },
+    "owners": ["0xA4ca1b15fE81F57cb2d3f686c7B13309906cd37B"],
+    "createdAtBlock": 16076708
+  },
+  {
+    "id": "0xa0affa31521afe084aee15c3ff5570c600b014cae2a9c45a9cc1e50b0c9852e5",
+    "projectNumber": 1,
+    "metaPtr": "bafkreici2x2ttp2ln2x2gagkooq3i4q3npvdbl3d6aevigko3voctnnqvy",
+    "metadata": {
+      "title": "CryptoStats",
+      "description": "One neutral source of truth for crypto metrics. Used by everyone, and managed by the community.",
+      "website": "https://cryptostats.community/",
+      "projectTwitter": "https://twitter.com/CryptoStats_",
+      "logoImg": "bafkreifp4rhixzixosu4camfwxcfd4hmdvjwd5x557mha6uop4wfp3zeiy",
+      "logoImgData": {},
+      "credentials": {},
+      "createdAt": 1669917890731
+    },
+    "owners": ["0x6faaD3C23Ba7F04db0b54B87C185cE4fb2676B60"],
+    "createdAtBlock": 16091629
+  },
+  {
+    "id": "0x5d8c43ef40b6294bee31db1875e1a4535775044899ddf704a5360028bf377d16",
+    "projectNumber": 2,
+    "metaPtr": "bafkreiftnnatmsw6eni54vw5ibp7afwropf2zmgrxsigzli7ldtudvvrcm",
+    "metadata": {
+      "title": "Gitcoin Grants Matching Pool",
+      "description": "This is the official matching pool fund for all Gitcoin grants. Gitcoin's purpose is to enable communities to fund their shared needs. ",
+      "website": "https://gitcoin.co",
+      "projectTwitter": "gitcoin",
+      "userGithub": "kweiss",
+      "projectGithub": "gitcoinco",
+      "logoImg": "bafkreigmzavhrnijwgwy2fyf7wdb66c5jdfl46getrdnoiebywpc25szdy",
+      "logoImgData": {},
+      "credentials": {
+        "github": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0xc2E2B715d9e302947Ec7e312fd2384b5a1296099",
+            "hash": "v0.0.0:onJ4STpW56E+ER94HyHCKnzNTbpyk/OWTcHdrPXoac0=",
+            "provider": "ClearTextGithubOrg#gitcoinco#1017776",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ]
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-04-27T01:43:48.117Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-04-27T01:43:48.117Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..BVO3zvkSGotilFrU-plMsOzMDX0G9DUSQHolgZJ5PH40xiWTtSeoVO8HCD1tMRj1sWl_cHX6Qw40QrdJmuVaDw"
+          },
+          "expirationDate": "2023-07-26T01:43:48.117Z"
+        },
+        "twitter": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0xc2E2B715d9e302947Ec7e312fd2384b5a1296099",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "hash": "v0.0.0:yZ0E2/FA7F7jIWzdAgfmjJVFXTVsww6GGiyjcojBQzk=",
+            "provider": "ClearTextTwitter#gitcoin"
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-04-27T01:44:28.052Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-04-27T01:44:28.052Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..yvjcru1a7DPvAYOgi6bmMUDCtzePi1_c67-TMp8vUnouosFhao1mw9t0cE06sfecdP7moO0Ag1a3QAeeBVRpAQ"
+          },
+          "expirationDate": "2023-07-26T01:44:28.052Z"
+        }
+      },
+      "createdAt": 1670004099035
+    },
+    "owners": ["0xc2E2B715d9e302947Ec7e312fd2384b5a1296099"],
+    "createdAtBlock": 16098782
+  },
+  {
+    "id": "0x128a79c5f52d33bc49f5677dd0fcd695e44f22916b920dc3490c18f10099db66",
+    "projectNumber": 3,
+    "metaPtr": "bafkreih2o2iyhnuo54fwglpi5vqd5zwlzcsoavfgaqqqjfs56cc27wbdjy",
+    "metadata": {
+      "title": "Chaineye",
+      "description": "ChainEye aims to build the world leading free and open source omnichain analytical tools for retail investors.  Launched in the Q4 2021, Chaineye has a total of over 100k user visits.\nCurrently, it has the following core functions:\n \nBridgeEye - a multi-chain bridge comparison tool. Users can use this tool to find the optimal bridge option given the source chain, destination chain and the amount of asset. Supported Chains include ethereum, polygon, avalanche, bnb chain, aurora, fantom etc. \n \nCEX transfer fee -  Uses can check all the CEXs deposit and withdrawal status without logging into CEX. Users can find the cheapest route between CEX & On-chain transfer by sorting out the withdrawal fee. The data is updated every 10 minutes.\n \nMultichain Gas - Users can check the gas history and hour distribution for various chains in one page.\n\nETH Staking - Users can find eth staking metrics such as 7 Days apy, effective apy, TVL, stakers, liquidity,  volume, rewards cycles etc. for different staking protocols. \n\nRPC List - Users can find the best public rpc in terms of height, latency , 24 hour status, provider information etc. We provide the most complete rpc public nodes in the market for the following chains: Etherum, BNB, Polygon, aurora, fantom etc. \n\nStable Coins Dashboard- Key data metrics include native chains where stable coins are issued, price, month off peg , market cap ,market cap changes, collateral value, collateral composition, audit report etc. \n\nChainMap - Users can find interesting participating opportunities on each chain such as yield farming, swap&lending,NFT mining, airdrop, DAO governenance etc. We currently support Optimism and Starknet and will add more chains soon.\n\nFree Goerli Faucet- Coming soon！",
+      "website": "https://Chaineye.tools",
+      "projectTwitter": "biteyecn",
+      "userGithub": "DeFiTeddy",
+      "projectGithub": "DeFiEye",
+      "logoImg": "bafkreifj4zsebd6taptf4vlwjnssn5h5nelfoeqwtbz5ugczxigdk4337y",
+      "bannerImg": "bafkreialbihpudovcg44jew4ompuxqhruco5fp2nlkn2kalqpk7epltxva",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {
+        "twitter": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0x112E372bb5EC17c1ea6b1d679EA72aFBD2A94404",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "provider": "ClearTextTwitter#BiteyeCN",
+            "hash": "v0.0.0:RbcEpvmCM+vgVe3JEoyp/Qvoqy1WLecdiG9Niz2lfRo="
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-04-15T14:45:43.079Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-04-15T14:45:43.079Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..zOvesqgidiLP0CkIq97ofTyx0ZMlKQjTBnTFAZ7CmqElYZk4SprwR8AX6-yhwhe5oYfBA2hHyi6W6aiOj197Aw"
+          },
+          "expirationDate": "2023-07-14T14:45:43.079Z"
+        },
+        "github": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0x112E372bb5EC17c1ea6b1d679EA72aFBD2A94404",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "hash": "v0.0.0:MJrlyz1wFYpD2B/81/8rkouecGVCXb4YVyN3dvuDCx0=",
+            "provider": "ClearTextGithubOrg#DeFiEye#30036794"
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-04-15T15:05:22.340Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-04-15T15:05:22.340Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..K_3YZHXsayc0pZCN7UfG3-iaOhE7UEL6ENv9E_2oL6MvjYxoZLCkgRSL8U-jqfbFhIzpW6Ly9RNd7iV-8t_TBQ"
+          },
+          "expirationDate": "2023-07-14T15:05:22.340Z"
+        }
+      },
+      "createdAt": 1670116734938
+    },
+    "owners": ["0x112E372bb5EC17c1ea6b1d679EA72aFBD2A94404"],
+    "createdAtBlock": 16108120
+  },
+  {
+    "id": "0x6d6e8fc20ac24fdb4b3efea919528f41eb0261a65c30d791f285c1f9200cf53b",
+    "projectNumber": 4,
+    "metaPtr": "bafkreie66f4ahx7oa33ukv5wtkcksv2edwjmzbjcj5oirxo324nhdmxepy",
+    "metadata": {
+      "title": "To establish a community hub/center to empower communities and young generation with life skills and crypto education",
+      "description": "SETTING UP A COMMUNITY HUB/CENTER CRYTO AWARENESS & EDUCATION\nTo help train rural farmers on regenerative /smart agriculture, establish demonstration farm, linking vulnerable children with sponsor and training young generation on entrepreneurship skills\n To reach mass-scale adoption, it's necessary to spread financial literacy for crypto assets and block chain education to understand how this technology and the overall crypto space work and make education more accessible.\nCrypto awareness is essential because it allows Local Bank to effectively communicate and engage with its customers by answering any questions about block chain technology or how they can use crypto currencies more safely.\nThe crypto-based economy is moving towards open source, global access to all regardless of nationality or socioeconomic status. The global financial inclusion due to crypto currencies can provide access to critical financial products to over 1.7 billion people over the globe who have remained unbanked or under banked\n\nSKILLING YOUNG PEOPLE WITH COMPUTER LITERACY SKILLS\n1.\tIdentify the components and function of the hardware used in a computer system.\n2.\tDescribe the function of system software.\n3.\tDescribe the function of application software.\n4.\tList the steps in systems analysis and design.\n5.\tDescribe the popular programming languages and the process of developing computer software.\n6.\tCreate a simple computer program.\n7.\tAnalyze the impact of computer technology and its ethical implication on society.\n8.\tDemonstrate basic proficiency of productivity software, including word processing, spreadsheet, presentation, database and multimedia software.\n9.\tDemonstrate proficiency in electronic communications technology.\n10.\tExplain basic computer networking concepts and architecture.\n11.\tUse the Internet and World Wide Web to perform research.\n12.\tCreate a basic Web page.\n13.\tDemonstrate proficiency in social networking.\n14.\tDiscuss computer security and its importance for business and personal use of computers.\n\n",
+      "website": "https://ayoweccauganda.org",
+      "projectTwitter": "ayowecca_uganda",
+      "userGithub": "jjonathanolwenyi",
+      "projectGithub": "AYOWECCAUGANDA",
+      "logoImg": "bafkreihxl2tjz7gbssld3vh5inpjyw2deoqr66cmmpaor32sdmiej2edcq",
+      "bannerImg": "bafkreihx2mzt3sesctmufd2volt5tmeqs2j6qj5fuswgm76wxqapmnx2gm",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {
+        "twitter": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0xE559e959b891b14eB5A9DdE45C61b1aEb0b6DF4B",
+            "provider": "ClearTextTwitter#ayowecca_uganda",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "hash": "v0.0.0:QN0u1dXDT5zeVfDi/vfcUwe8TTkH/cF0nSeDFiqpLS4="
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-09-18T14:24:39.881Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-09-18T14:24:39.881Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..JLyXYhWnuSbUyZ3RK6esLEnzCMX3hIy51Y90MwVeFuO_sLsBcHFdnt-yBWvyB8dPi63NRnAlMo09lLyNxdNbBg"
+          },
+          "expirationDate": "2023-12-17T14:24:39.881Z"
+        }
+      },
+      "createdAt": 1670249407806
+    },
+    "owners": ["0xE559e959b891b14eB5A9DdE45C61b1aEb0b6DF4B"],
+    "createdAtBlock": 16118518
+  },
+  {
+    "id": "0xf322b3e0289c0311be5e94db88021b82286fef6b18b4ae865632ebe401a2860d",
+    "projectNumber": 5,
+    "metaPtr": "bafkreihhxl3ccmt2pqae3p2vrm4galnycknk3kaijzuclzqsfhd5uxf4fu",
+    "metadata": {
+      "title": "Talent DAO",
+      "description": "Where talent is sourced",
+      "website": "https://talentdao.com",
+      "userGithub": "codenamejason",
+      "projectGithub": "TalentDAO",
+      "credentials": {},
+      "createdAt": 1670259397446
+    },
+    "owners": ["0xA4ca1b15fE81F57cb2d3f686c7B13309906cd37B"],
+    "createdAtBlock": 16119925
+  },
+  {
+    "id": "0x0718e3d08633de4d7d2a6cf71e13f79507ba19f4389552fec4314e7ad5a13fc9",
+    "projectNumber": 6,
+    "metaPtr": "bafkreieymyuh56l6xpi7bwjxay4lhrq43ewdjt2zoyd3hx2yjljt2uwpmu",
+    "metadata": {
+      "title": "StaTwig Supply Chain Visibility for Life Saving Vaccines and Food",
+      "description": "StaTwig, a pioneering force in blockchain-powered Supply Chain Visibility, participated in a pilot quadratic funding round by GitCoin by an exclusive invitation from UNICEF. This recognition underscores our track record of impactful innovations, notably our game-changing VaccineLedger, which has been diligently reviewed by UNICEF.\n\nBy skillfully employing funds from the pilot round, we have scaled our solution, catalyzing deployments that are set to make transformative waves on a country-wide scale, commencing with Bangladesh. As we traverse this dynamic stage, we wholeheartedly seek the support of the vibrant GitCoin community to amplify the reach and influence of our groundbreaking solution.\n\nAt the heart of our mission is VaccineLedger, an audacious decentralized supply chain management platform that meticulously traces vaccines, from their manufacturing origins to the very last beneficiary. Its indomitable role in facilitating COVID-19 and other critical vaccine deliveries worldwide has earned it the prestigious recognition of the United Nations as a Digital Public Good (DPG) in August 2022.\n\nStaTwig's impact reverberates through the endorsement of esteemed governments and leading organizations like the World Economic Forum, Gavi, The Trinity Challenge, Techstars, Polygon, and Protocol Labs. As we stand on the precipice of reshaping the vaccine landscape, we invite you to join us in partnership with UNICEF and GitCoin, resonating with the promise of enhanced vaccines for the masses.\n\nThe tomorrow of unborn generations hinges on our collective efforts. Be part of this transformative narrative.\n\nCheck out StaTwig in the news:\n📰 http://bit.ly/3VDEEcn\n📰 http://bit.ly/3iIc8aM\n📰 http://bit.ly/3VAwGkn\n📰 http://bit.ly/3XSUBNz",
+      "website": "https://statwig.com",
+      "projectTwitter": "StaTwig",
+      "userGithub": "vaccineledger",
+      "projectGithub": "StaTwig",
+      "logoImg": "bafkreieyy3hssuc4rko5wkpus5cmthksphng2gya5ktg4g3qke63ijwxlq",
+      "bannerImg": "bafybeifosh74bajxv7tjgec2b5uwmxpa677bpvuyfl62fh2xjiq2573alu",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {
+        "twitter": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0x06Fd1a0356A1e58852721331A3aEd1b7ebE214ed",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "provider": "ClearTextTwitter#StaTwig",
+            "hash": "v0.0.0:Sj0HpYI6Aa6oHC5+xii05ppoEeiGhpqQ3/dGQFm3/co="
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-08-08T07:09:54.216Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-08-08T07:09:54.216Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9.._cOiJidyIb0BLxQzbLkBUwKYYS7mojH6heG48RK6GqhV1UKW1T99030-KAxdkQBZePo6V4HTow5HDQEKPrdTCQ"
+          },
+          "expirationDate": "2023-11-06T07:09:54.216Z"
+        },
+        "github": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0x06Fd1a0356A1e58852721331A3aEd1b7ebE214ed",
+            "hash": "v0.0.0:DUEIlirnHdyFMTXy37qZO7X4zYY70R/49HblAjhV8CM=",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "provider": "ClearTextGithubOrg#StaTwig#64884751"
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2023-08-09T08:14:14.578Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2023-08-09T08:14:14.578Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..UlwFoaQL3h7f-LW4mOr6W16as-oGeQjwheklXjQPoKEiqRBpIygOCEzwgJLMOdzlfEaTDzmQP_NM-EUSUTvDBw"
+          },
+          "expirationDate": "2023-11-07T08:14:14.578Z"
+        }
+      },
+      "createdAt": 1670261592613
+    },
+    "owners": ["0x06Fd1a0356A1e58852721331A3aEd1b7ebE214ed"],
+    "createdAtBlock": 16120102
+  },
+  {
+    "id": "0xf944d9fca398a4cb7f4d9b237049ad807d20f9151c254a6ad098672c13bce124",
+    "projectNumber": 7,
+    "metaPtr": "bafkreihz53ndtngdnfaowxwkbww7zfjvps3m52m3qwqiqhljac24g3ukuy",
+    "metadata": {
+      "title": "Play Art",
+      "description": "Play Art is a decentralized ART and NFT creation platform, for creating artistic NFT that have a weirdly unique prop called live drawing.",
+      "website": "https://playart.vercel.app",
+      "userGithub": "praise-eze",
+      "logoImg": "bafkreihzas6pid4nbnzwcjfzv24uuskiilhfekutfc3o5ap5hs4mek5jji",
+      "bannerImg": "bafkreidb27k2tuudsp3xfkiiksthwhq7bqqpx5rm6vsnmeo7mkrzt5zdcy",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670262156939
+    },
+    "owners": ["0x4c6Ec2448C243B39Cd1e9E6db0F9bF7436c0c93f"],
+    "createdAtBlock": 16120153
+  },
+  {
+    "id": "0xa8570318dc5eb4618cb030b0f06ea912302efedecf23d819710ae76ff9f238ad",
+    "projectNumber": 8,
+    "metaPtr": "bafkreih46eolre3y6aw3o6wzpwjiwmrqay7b2jgidrrhssptxzxeiutayy",
+    "metadata": {
+      "title": "Treejer Protocol",
+      "description": "Treejer is an open protocol connecting donors to rural planters worldwide. The project leverages cutting-edge concepts such as decentralized finance (DeFi), non-fungible tokens (NFTs) and smart contracts to unlock new opportunities in financing forest conservation and rural development.\n\n[![Treejer-One-Pager-Gitcoin.jpg](https://i.postimg.cc/ydCQRRvD/Treejer-One-Pager-Gitcoin.jpg)](https://postimg.cc/d7njPhMF)\n\nTreejer acts as a seamless, transparent bridge empowering local communities through crypto donations even in unbanked and remote areas. Treejer's approach incentivizes not only forest plantation but also conservation by locking up the funds in a smart contract and releasing it over time as planters and other data providers continue providing updates from forest status.\n\n[![Treejer-Donor-App-Gitcoin.jpg](https://i.postimg.cc/XvfKTzkv/Treejer-Donor-App-Gitcoin.jpg)](https://postimg.cc/2q5BWTJp)\n\nThe protocol also provides proof-of-impact to donors in the form of dynamic tree NFTs that have real-world attributes. These NFTs are linked to each tree and are minted on Polygon network.\n\nTreejer protocol has several smart contracts and two main interfaces: a payment and forest tracking interface offered to donors on \"https://treejer.com\" and a dedicated mobile app for tree planters and rural ambassadors. They use it to submit new trees, provide updates and unlock conservation rewards.\n\n[![Ranger-App-Treejer-Gitcoin.jpg](https://i.postimg.cc/Z5Gh5Vv3/Ranger-App-Treejer-Gitcoin.jpg)](https://postimg.cc/hX1YC8rP)\n\nBesides using official interfaces, builders can integrate the tree planting plugin with their existing products.\n\n🌳 **Product demo (click to view)**\n[![https://youtu.be/ZTcy-6IxT7U](https://i.postimg.cc/xTs5tMpk/Cover-1.jpg)](https://youtu.be/ZTcy-6IxT7U)\n\n**The impact of quadratic donations**\nThis quadratic round will help us keep building the next iteration of Treejer protocol (v2.0) and expand the adoption of our current products.\n\n**Learn more about Treejer**\n\n🌳 Documentation:\nhttps://docs.treejer.com\n\n🌳 Discord:\nhttp://discord.gg/treejer\n\n🌳 Twitter:\nhttps://twitter.com/treejertalks",
+      "website": "https://treejer.com",
+      "projectTwitter": "TreejerTalks",
+      "userGithub": "ermio",
+      "projectGithub": "treejer",
+      "logoImg": "bafkreigbovyjh2noqfyrq4gazjce5koyafawah2alzfro2wyep6zkbvzde",
+      "bannerImg": "bafybeidkgbti4vnunhyfigt6cahe2v7rxsujdmpjbpqpahw5bra4ld43di",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {
+        "github": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0x81c776d0D7F7d9D3699851993EcAa88A46187F11",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ],
+            "provider": "ClearTextGithubOrg#treejer#36486470",
+            "hash": "v0.0.0:uwBpeP6wfDAcr+1/HT8fAqoLO7YnlHuk4uQV+PEZNkU="
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2022-12-08T03:31:45.379Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2022-12-08T03:31:45.379Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..KAgtTj_hBMVRm8LK2w8v7X4_0JZtDHMnYL2HM3lzC87uCBcR7byR5nRNL6s2lJOGDdAf-x9L_9VCmG6xUG4dDg"
+          },
+          "expirationDate": "2023-03-08T03:31:45.379Z"
+        },
+        "twitter": {
+          "@context": ["https://www.w3.org/2018/credentials/v1"],
+          "type": ["VerifiableCredential"],
+          "credentialSubject": {
+            "id": "did:pkh:eip155:1:0x81c776d0D7F7d9D3699851993EcAa88A46187F11",
+            "provider": "ClearTextTwitter#TreejerTalks",
+            "hash": "v0.0.0:TRYeZAqisZtVtLr1w4GvkYzH0PJpYBQfKNekheWa4oU=",
+            "@context": [
+              {
+                "hash": "https://schema.org/Text",
+                "provider": "https://schema.org/Text"
+              }
+            ]
+          },
+          "issuer": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+          "issuanceDate": "2022-12-08T03:31:38.308Z",
+          "proof": {
+            "type": "Ed25519Signature2018",
+            "proofPurpose": "assertionMethod",
+            "verificationMethod": "did:key:z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC#z6MkghvGHLobLEdj1bgRLhS4LPGJAvbMA1tn2zcRyqmYU5LC",
+            "created": "2022-12-08T03:31:38.308Z",
+            "jws": "eyJhbGciOiJFZERTQSIsImNyaXQiOlsiYjY0Il0sImI2NCI6ZmFsc2V9..mcqsqMOnmSbgsypjZLr-3iQljM4AeO2Vn2sL070YKM5Vs-BS_fUS-DVzq4SynftIYXDwniazWdD3h0bXbl9FCw"
+          },
+          "expirationDate": "2023-03-08T03:31:38.308Z"
+        }
+      },
+      "createdAt": 1670271645479
+    },
+    "owners": ["0x81c776d0D7F7d9D3699851993EcAa88A46187F11"],
+    "createdAtBlock": 16120934
+  },
+  {
+    "id": "0x19ace9f9a5f68b506c591e15a02206227c90c030e8b78fd2ff09e9cf81ff7224",
+    "projectNumber": 9,
+    "metaPtr": "bafkreifsvpps346tjdfcl4hozhc6xsxfkuksydqejdig34xd7vssrde4gi",
+    "metadata": {
+      "title": "Somleng - A full-stack cloud communications platform",
+      "description": "Somleng is a collection of open source tools which provide a full-stack cloud communications platform. The goal of the project is to break down the economic and accessibility barriers to communications.\n\nOur vision is a world where communications is accessible to everyone.\n\nYou can use Somleng to roll out your own Programmable Voice and SMS in order to:\n\n🏥 Save lives\n🧒🏽 Improve the lives of children\n👨‍👩‍👦 Improve livelihoods\n\n🇰🇭 Somleng powers the National Early Warning System for Cambodia. The National Early Warning System saves lives in the case of natural disasters, such as flooding, by sending out automated phone call alerts to vulnerable people who are in immediate danger. Automated voice alerts, delivered by phone call, is the technology that makes the most sense for early warning systems, because voice messages can be recorded in local languages and delivered directly to the beneficiary. This eliminates the need for Internet access or literacy skills. Learn more: https://www.somleng.org/case_studies.html#early-warning-system-cambodia\n\n🇬🇹 Somleng helps to improve the lives of children by educating caregivers on how to better take care of their loved ones. In Guatemala, Somleng powers UNICEF's initiative to promote behavior change for the prevention of childhood malnutrition with mobile phone technology. Voice messages are recorded in 7 native Mayan languages with information about health, hygiene, sanitation, maternal nutrition, breastfeeding, complementary feeding and parenting guidelines, produced for caregivers (mothers and fathers) of children. Somleng then delivers the messages directly to beneficiary via automated phone calls. Learn more: https://www.somleng.org/case_studies.html#mhealth-unicef-guatemala\n\n🇿🇲 In Zambia, Somleng powers the Mama Info health service, designed by People In Need, to improve maternal and child health and nutrition outcomes, influence attitudes and enhance knowledge and skills of women about the importance of key health and nutrition behaviors. Audio messages are incorporated into dialogues and performed by a local drama group that created culturally appropriate characters to provide an educative, engaging and entertaining service, effective at changing people's behaviors. These dialogues were designed typically around specific topics such as health, nutrition or hygiene. The set contains key messages related to maternal health and nutrition as well as nutrition and health of children aged 0-6 and 7-24 months. The messages are then delivered to the beneficiary via automated phone calls powered by Somleng. Learn more: https://www.somleng.org/case_studies.html#mama-info-zambia\n\n🇰🇭 🇿🇲 🇲🇽 🇨🇦 🇸🇴 🇪🇬 🇬🇭 Somleng is also powering cloud communications for a number of local carriers around the world. Local carriers can offer much cheaper pricing than global CPaaS providers. By using Somleng, local carriers can offer their own branded programmable voice and SMS to their customers, generating extra revenue which would otherwise go to global CPaaS providers dominated by big tech. This helps to achieve a more equitable world, where profits stay local generating jobs and improving livelihoods. Learn more: https://www.somleng.org/case_studies.html#powering-cpaas-mexico",
+      "website": "https://www.somleng.org",
+      "projectTwitter": "SomlengProject",
+      "userGithub": "somleng/somleng-project",
+      "projectGithub": "somleng",
+      "logoImg": "bafkreihfocwoxpa54fiimjnebdh3lnrcb3rcuqoh345tjyws2vxntjjqti",
+      "bannerImg": "bafybeihnzpm7yykjwl66ko44wmmortqe45radvjzuil7g2fwvchr2maura",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670284321935
+    },
+    "owners": ["0x6078c8eeB7ED8916A8f1e85dc8F6E780C09a89fF"],
+    "createdAtBlock": 16121987
+  },
+  {
+    "id": "0xb7156064166644953bcb0082539886b35cb53730c282c703199eb3c5c760387e",
+    "projectNumber": 10,
+    "metaPtr": "bafkreidqzpy2sc2hw3rrx64veqxjzqlnmx35la3shiqylp2xwcmkrdfl5m",
+    "metadata": {
+      "title": "GPC Test Project",
+      "description": "This is a test project of GPC.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+      "website": "https://www.gitcoin.co",
+      "credentials": {},
+      "createdAt": 1670296308967
+    },
+    "owners": ["0xc24e3C2e72f960fa1d54170Fa03492DDa4cE8256"],
+    "createdAtBlock": 16122983
+  },
+  {
+    "id": "0xace36448a1522912bfc22a90686ac7f0f699b662e8201d51afaff636c13cfc47",
+    "projectNumber": 11,
+    "metaPtr": "bafkreia2vfb3o4n3giw3gqagqkcu4fxeyelug4ak5urcqtvd3vogs4eq5e",
+    "metadata": {
+      "title": "Daniele's Test Project",
+      "description": "This is a test",
+      "website": "https://danielesalatti.com",
+      "projectTwitter": "DanieleSalatti",
+      "userGithub": "DanieleSalatti",
+      "projectGithub": "DanieleSalatti",
+      "logoImg": "bafybeifg6h5u5qy7zgpjck5oe44agypmt53xzysraa5kebdcac264l7x4y",
+      "bannerImg": "bafybeiaoaeo2547wkej4fg5alpxqkpjzk4o6a3qu33l7epb5zmdbshbvpq",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670298956856
+    },
+    "owners": ["0x523d007855B3543797E0d3D462CB44B601274819"],
+    "createdAtBlock": 16123203
+  },
+  {
+    "id": "0x306a97b03597e1777d23a53aa4d3a46c1cd2c06a18c03927df739fadf56e3848",
+    "projectNumber": 12,
+    "metaPtr": "bafkreiemosjfwhr3wbyl7lbxpn7swkdmp5gr5iumz52cnqtt4wkum6x7ne",
+    "metadata": {
+      "title": "Kotani Pay",
+      "description": "Kotani Pay is a technology stack that enables blockchain protocols, dapps, and blockchain fintech companies to integrate seamlessly to local payment channels providing them with a reliable on ramp and off ramp service to reach a wider customer base in Africa.\n\nKotani Pay provides full crypto wallet functionality on interfaces familiar to the African audience, and can be used on both feature phones and smartphones.\n\nWe are currently serving and offering financial inclusion to various populations including refugees, gig workers, local businesses, and farmers.\n\nWe have enabled refugees in Daadab and Kakuma UNHCR camps to receive an unconditional basic income from crypto philanthropists and non-governmental organizations, allowing many beneficiary families to meet their daily basic needs.\n\nMany unemployed youth are unable to access work on international platforms due to the difficulty of cashing out their earnings as a majority of them do not have bank accounts or access to Paypal wallets. These youth can now work on microtask platforms and earn digital assets and utilize Kotani Pay to earn their dues directly to their mobile money wallets.\nWe are also running a De-Fi program to enable farmers and landowners to access low-interest loans and perform transparent and real-time transactions, with a very easy repayment schedule and process. This ensures that these farmers can access inputs and multiply their output and earnings, drastically improving livelihood and financial stability\n",
+      "website": "https://kotanipay.com",
+      "projectTwitter": "@kotanipay",
+      "projectGithub": "https://github.com/kotanipay",
+      "logoImg": "bafkreiaidalrez7jikfoqr6udrx7ou4zmxtzuw2ldy7jd6w33kczkpvv2m",
+      "bannerImg": "bafybeicd54fdapl7bzhbzzushngun2r2yj5yvoll7y63eitsmugtve5iku",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670408781931
+    },
+    "owners": ["0xd27E1a1a60eBc1B70f4Cae5265092C0f6eDc7F9d"],
+    "createdAtBlock": 16132231
+  },
+  {
+    "id": "0x41b838dc0a624db0eb8a096d90ade9f01a8598117f8d94d419f0496af1d04dbd",
+    "projectNumber": 13,
+    "metaPtr": "bafkreiglhczydonhetcuxkghadz7lzo3t3kmjoab23dfgmigdxwnhf7x3y",
+    "metadata": {
+      "title": "Simple Map",
+      "description": "We are an open-source geographical asset management platform for photovoltaic plants and agricultural crops. Our solution allow companies and early stage entrepreneurs to have a really functional mapping platform to host their services. ",
+      "website": "https://simplemap.io",
+      "userGithub": "https://github.com/rentadronecl",
+      "projectGithub": "https://github.com/rentadronecl",
+      "logoImg": "bafkreiay2kyczp6foqsfm6ev42ik22fpof6l3boj4g6w2untjllf6n352a",
+      "bannerImg": "bafkreibte7vcnqn6wor2x3q7ppfenogawzvvtgv3tr2i3lcz56kotiovye",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670446214944
+    },
+    "owners": ["0x95d34596dB5A2f65f2a92B97955BF7920Fd1c9e3"],
+    "createdAtBlock": 16135326
+  },
+  {
+    "id": "0xef1b47da2b06d4bc21ed82ebc207e710635a9c881f83a64843fe7f972adbdb0f",
+    "projectNumber": 14,
+    "metaPtr": "bafkreidjnrevfaygdfvbsdfjkrzteazq3p23qx7swhnt5ht3tvzfgradxi",
+    "metadata": {
+      "title": "AEDES - CirroLytix fighting dengue through big data",
+      "description": "AEDES aims to improve public health response against dengue by predicting dengue cases from climate and digital data and pinpointing possible hotspots from satellite data.\n\nWe propose an automated information portal that correlates dengue cases and deaths with real-time data from climate, google searches, and satellite maps, giving an advance indicator of when dengue will emerge and potential dengue hotspot locations. This portal is targeted towards public health and local government agencies to give them advanced notice of dengue outbreaks and help prioritize resources. ",
+      "website": "https://aedesproject.org",
+      "projectTwitter": "cirrolytix",
+      "userGithub": "Cirrolytix/aedes_dpg",
+      "projectGithub": "Cirrolytix",
+      "logoImg": "bafkreic22tgfyc4zlfdti5vywmapvyse2dqxhneltwstw4pn66oq4uflnm",
+      "bannerImg": "bafybeifdcz4jasn2ihgelrmnqs7wytbj6cmya3itaxgrdm6v3as7lkh4vq",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670513901446
+    },
+    "owners": ["0x2906e0181f371B7A4c4BfFE13E31b2A917B368E8"],
+    "createdAtBlock": 16140955
+  },
+  {
+    "id": "0x52b7ce74c4d38bc3a5516981ab411f93cf6b2be6ec01761d9cad9fcdc141d744",
+    "projectNumber": 15,
+    "metaPtr": "bafkreidjnrevfaygdfvbsdfjkrzteazq3p23qx7swhnt5ht3tvzfgradxi",
+    "metadata": {
+      "title": "AEDES - CirroLytix fighting dengue through big data",
+      "description": "AEDES aims to improve public health response against dengue by predicting dengue cases from climate and digital data and pinpointing possible hotspots from satellite data.\n\nWe propose an automated information portal that correlates dengue cases and deaths with real-time data from climate, google searches, and satellite maps, giving an advance indicator of when dengue will emerge and potential dengue hotspot locations. This portal is targeted towards public health and local government agencies to give them advanced notice of dengue outbreaks and help prioritize resources. ",
+      "website": "https://aedesproject.org",
+      "projectTwitter": "cirrolytix",
+      "userGithub": "Cirrolytix/aedes_dpg",
+      "projectGithub": "Cirrolytix",
+      "logoImg": "bafkreic22tgfyc4zlfdti5vywmapvyse2dqxhneltwstw4pn66oq4uflnm",
+      "bannerImg": "bafybeifdcz4jasn2ihgelrmnqs7wytbj6cmya3itaxgrdm6v3as7lkh4vq",
+      "logoImgData": {},
+      "bannerImgData": {},
+      "credentials": {},
+      "createdAt": 1670513901446
+    },
+    "owners": ["0x2906e0181f371B7A4c4BfFE13E31b2A917B368E8"],
+    "createdAtBlock": 16140956
+  }
+]
