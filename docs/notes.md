@@ -1,0 +1,22 @@
+- Corpus:
+  - current: `projects.json` as produced by the [indexer](https://github.com/gitcoinco/allo-indexer/)
+  - considered:
+    - all projects of all chains, annotated with chain and round id
+    - donations (project->donor map)
+- Media:
+  - current: structured text (JSON)
+  - considered: relationships (e.g. to support popularity signals and "users who donated to X also donated do...")
+- Query language:
+  - current: keywords for semantic search; keywords plus boolean operator for full text searchh
+  - considered:
+- Context-dependence:
+  - current: none
+  - considered: currently active round, if any; geographical location?
+- Latency:
+  - current: acceptable for demo on single-CPU 2GB Fly instance
+  - considered: TBD
+- Access control:
+  - entirely public
+- Internationalization:
+  - current: English only
+  - considered: TBD
