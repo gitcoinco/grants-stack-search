@@ -181,14 +181,14 @@
             <h5>
               <a
                 href="#project"
-                hx-get="/projects/{{ p.id }}"
+                hx-get="/projects/{{ p.project_id }}"
                 hx-target="#project"
                 nunjucks-template="project-tmpl"
               >
                 {{ p.name }}
               </a>
             </h5>
-            <div>{{ p.description }}</div>
+            <div>{{ p.description_plain }}</div>
             <div class="fade-out"></div>
           </article>
 

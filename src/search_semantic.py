@@ -4,7 +4,7 @@ from langchain.vectorstores import Chroma
 from typing import List
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from src.data import InputProjectDocument
-from src.search import SearchEngine
+from src.search import SearchEngine, SearchResult
 
 
 class SemanticSearchEngine(SearchEngine):
@@ -27,12 +27,17 @@ class SemanticSearchEngine(SearchEngine):
             time.perf_counter() - start_time,
         )
 
-    def search(self, query_string: str) -> List[InputProjectDocument]:
-        projects = [
-            InputProjectDocument(raw_doc)
-            for raw_doc in self.db.similarity_search(query_string, k=10)
+    def search(self, query_string: str) -> List[SearchResult]:
+        return [
+            SearchResult.from_input_document(
+                input_document=InputProjectDocument(raw_doc),
+                # TODO normalize score to 0..1
+                score=score,
+            )
+            for raw_doc, score in self.db.similarity_search_with_score(
+                query_string, k=10
+            )
         ]
-        return projects
 
-    def get_db(self) -> Chroma:
+    def _hack_get_db(self) -> Chroma:
         return self.db

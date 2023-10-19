@@ -1,7 +1,5 @@
-from urllib.parse import urljoin
-from typing import List, Self, Any
+from typing import List
 import logging
-from pydantic import BaseModel
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.schema import Document
 from langchain.vectorstores import Chroma
@@ -12,16 +10,13 @@ from langchain.llms import OpenAI
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 from langchain.document_loaders import JSONLoader
 from langchain.indexes import VectorstoreIndexCreator
-from markdown import markdown
-from strip_markdown import strip_markdown
-
-from src.config import Settings
 
 
-class InvalidinputProjectDocumentException(Exception):
+class InvalidInputProjectDocumentException(Exception):
     pass
 
 
+# Wrap a Document to carry validity information together with the type
 class InputProjectDocument:
     def __init__(self, document: Document):
         if (
@@ -33,57 +28,9 @@ class InputProjectDocument:
         ):
             self.document = document
         else:
-            raise InvalidinputProjectDocumentException(
+            raise InvalidInputProjectDocumentException(
                 document.metadata.get("project_id")
             )
-
-
-class Project(BaseModel):
-    id: str
-    name: str
-    description: str
-    description_html: str
-    website_url: str
-    banner_image_url: str
-
-    @classmethod
-    def from_content_and_metadata(
-        cls, settings: Settings, content: Any, metadata: Any
-    ) -> Self:
-        return cls(
-            id=metadata["project_id"],
-            name=metadata["name"],
-            description=strip_markdown(content),
-            description_html=markdown(content, extensions=["mdx_linkify"]),
-            website_url=metadata["website_url"],
-            banner_image_url=urljoin(
-                settings.ipfs_gateway, "ipfs/" + metadata["banner_image_cid"]
-            )
-            if "banner_image_cid" in metadata
-            else "about:blank",
-        )
-
-    @classmethod
-    def from_input_project_document(
-        cls,
-        settings: Settings,
-        input_project_document: InputProjectDocument,
-    ) -> Self:
-        # TODO refactor
-        metadata = input_project_document.document.metadata
-        content = input_project_document.document.page_content
-        return cls(
-            id=metadata["project_id"],
-            name=metadata["name"],
-            description=strip_markdown(content),
-            description_html=markdown(content, extensions=["mdx_linkify"]),
-            website_url=metadata["website_url"],
-            banner_image_url=urljoin(
-                settings.ipfs_gateway, "ipfs/" + metadata["banner_image_cid"]
-            )
-            if "banner_image_cid" in metadata
-            else "about:blank",
-        )
 
 
 def load_projects_json(projects_json_path: str) -> List[InputProjectDocument]:
@@ -99,7 +46,7 @@ def load_projects_json(projects_json_path: str) -> List[InputProjectDocument]:
     for generic_document in loader.load():
         try:
             documents.append(InputProjectDocument(generic_document))
-        except InvalidinputProjectDocumentException:
+        except InvalidInputProjectDocumentException:
             pass
 
     return documents

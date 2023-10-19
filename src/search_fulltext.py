@@ -3,7 +3,7 @@ import logging
 from lunr import lunr
 from typing import List
 from src.data import InputProjectDocument
-from src.search import SearchEngine
+from src.search import SearchEngine, SearchResult
 
 
 class FullTextSearchEngine(SearchEngine):
@@ -36,7 +36,12 @@ class FullTextSearchEngine(SearchEngine):
             time.perf_counter() - start_time,
         )
 
-    def search(self, query_string: str) -> List[InputProjectDocument]:
-        results = self.search_index.search(query_string)
-        projects = [self.document_index[result["ref"]] for result in results]
-        return projects
+    def search(self, query_string: str) -> List[SearchResult]:
+        return [
+            SearchResult.from_input_document(
+                input_document=self.document_index[raw_result["ref"]],
+                # TODO normalize score to 0..1
+                score=raw_result["score"],
+            )
+            for raw_result in self.search_index.search(query_string)
+        ]
