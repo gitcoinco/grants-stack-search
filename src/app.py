@@ -7,6 +7,7 @@ from src.config import Settings
 from src.data import load_projects_json
 from src.search import SearchResult
 from src.search_fulltext import FullTextSearchEngine
+from src.search_hybrid import combine_results
 from src.search_semantic import SemanticSearchEngine
 
 
@@ -14,7 +15,7 @@ from src.search_semantic import SemanticSearchEngine
 # SETUP
 
 MAX_RESULTS_PER_STRATEGY = 8
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 load_dotenv()
 # how to make `type: ignore` unnecessary here?
 settings = Settings()  # type: ignore
@@ -65,6 +66,13 @@ def semantic_search(q: str) -> ProjectsSearchResponse:
 
     results = semantic_search_engine.search(q)
 
+    logging.debug(
+        "semantic search for '%s' returned %d results: %s",
+        q,
+        len(results),
+        [{"name": r.name, "score": r.score} for r in results],
+    )
+
     return ProjectsSearchResponse(results=results[0:MAX_RESULTS_PER_STRATEGY])
 
 
@@ -74,6 +82,33 @@ def fulltext_search(q: str) -> ProjectsSearchResponse:
         return ProjectsSearchResponse(results=[])
 
     results = fulltext_search_engine.search(q)
+
+    logging.debug(
+        "fulltext search for '%s' returned %d results: %s",
+        q,
+        len(results),
+        [{"name": r.name, "score": r.score} for r in results],
+    )
+
+    return ProjectsSearchResponse(results=results[0:MAX_RESULTS_PER_STRATEGY])
+
+
+@app.get("/hybrid-search")
+def hybrid_search(q: str) -> ProjectsSearchResponse:
+    if q.strip() == "":
+        return ProjectsSearchResponse(results=[])
+
+    results = combine_results(
+        semantic_results=semantic_search_engine.search(q),
+        fulltext_results=fulltext_search_engine.search(q),
+    )
+
+    logging.debug(
+        "hybrid search for '%s' returned %d results: %s",
+        q,
+        len(results),
+        [{"name": r.name, "score": r.score} for r in results],
+    )
 
     return ProjectsSearchResponse(results=results[0:MAX_RESULTS_PER_STRATEGY])
 

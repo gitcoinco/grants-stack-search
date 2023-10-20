@@ -96,7 +96,6 @@
               placeholder="Semantic search..."
               autocomplete="off"
               hx-get="/semantic-search"
-              hx-trigger="keyup changed delay:0.5s"
               hx-target="#projects"
               nunjucks-template="project-list-tmpl"
             />
@@ -110,7 +109,19 @@
               placeholder="Full text search..."
               autocomplete="off"
               hx-get="/fulltext-search"
-              hx-trigger="keyup changed delay:0.5s"
+              hx-target="#projects"
+              nunjucks-template="project-list-tmpl"
+            />
+          </div>
+
+          <div>
+            <input
+              type="search"
+              autofocus
+              name="q"
+              placeholder="Hybrid search..."
+              autocomplete="off"
+              hx-get="/hybrid-search"
               hx-target="#projects"
               nunjucks-template="project-list-tmpl"
             />
@@ -199,6 +210,10 @@
           <summary>Inspect API results for this search...</summary>
           <pre>{{ results | dump(2) }}</pre>
         </details>
+
+        {% else %}
+
+        <p>No results found. :(</p>
 
         {% endif %}
 

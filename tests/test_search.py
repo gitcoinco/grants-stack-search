@@ -3,6 +3,8 @@ from typing import List
 from src.data import InputProjectDocument
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
+from src.search_hybrid import combine_results
+from tests.conftest import ResultSets
 
 
 def test_fulltext_search(project_docs: List[InputProjectDocument]):
@@ -46,3 +48,22 @@ def test_semantic_search(project_docs: List[InputProjectDocument]):
     assert results[0].name == "CryptoStats"
     assert results[1].name == "Simple Map"
     assert results[0].score == 1.309523582458496
+
+
+def test_hybrid_search_with_strongly_relevant_keywords(result_sets: ResultSets):
+    results = combine_results(
+        semantic_results=result_sets.semantic_black_hare,
+        fulltext_results=result_sets.fulltext_black_hare,
+    )
+    assert len(results) == 1
+    assert results[0].name == "The Follow Black Hare"
+
+
+def test_hybrid_search_with_typo(result_sets: ResultSets):
+    results = combine_results(
+        semantic_results=result_sets.semantic_blck_hare,
+        fulltext_results=result_sets.fulltext_blck_hare,
+    )
+    assert len(results) == 2
+    assert results[0].name == "The Follow Black Hare"
+    assert results[1].name == "Sungura Mjanja Refi"

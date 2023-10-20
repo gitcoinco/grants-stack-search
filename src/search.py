@@ -1,3 +1,4 @@
+from mdx_linkify import mdx_linkify
 from typing import ClassVar, List, Any, Self
 from pydantic import BaseModel, computed_field
 from abc import ABC, abstractmethod
@@ -5,6 +6,8 @@ from src.data import InputProjectDocument
 from strip_markdown import strip_markdown
 from markdown import markdown
 from urllib.parse import urljoin
+
+markdown_linkify_extension = mdx_linkify.LinkifyExtension()
 
 
 # TODO defining this after `SearchEngine` causes "variable not defined" type warning in the definition of `search`. can it be avoided?
@@ -47,7 +50,9 @@ class SearchResult(BaseModel):
     @computed_field
     @property
     def description_html(self) -> str:
-        return markdown(self.description_markdown, extensions=["mdx_linkify"])
+        return markdown(
+            self.description_markdown, extensions=[markdown_linkify_extension]
+        )
 
     @computed_field
     @property

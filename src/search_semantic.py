@@ -34,7 +34,7 @@ class SemanticSearchEngine(SearchEngine):
                 # TODO normalize score to 0..1
                 score=score,
             )
-            for raw_doc, score in self.db.similarity_search_with_score(
+            for raw_doc, score in self.db.similarity_search_with_relevance_scores(
                 query_string, k=10
             )
         ]
