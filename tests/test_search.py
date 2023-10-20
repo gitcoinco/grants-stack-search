@@ -1,6 +1,7 @@
 import pytest
 from typing import List
 from src.data import InputProjectDocument
+from src.search import SearchResult
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 from src.search_hybrid import combine_results
@@ -19,20 +20,6 @@ def test_fulltext_search(project_docs: List[InputProjectDocument]):
         == "0xf944d9fca398a4cb7f4d9b237049ad807d20f9151c254a6ad098672c13bce124"
     )
     assert results[0].score == 26.793
-
-    # TODO test these computed properties separately
-    assert (
-        results[0].description_plain
-        == "Play Art is a decentralized ART and NFT creation platform, for creating artistic NFT that have a weirdly unique prop called live drawing."
-    )
-    assert (
-        results[0].banner_image_cid
-        == "bafkreidb27k2tuudsp3xfkiiksthwhq7bqqpx5rm6vsnmeo7mkrzt5zdcy"
-    )
-    assert (
-        results[0].banner_image_url
-        == "https://ipfs.io/ipfs/bafkreidb27k2tuudsp3xfkiiksthwhq7bqqpx5rm6vsnmeo7mkrzt5zdcy"
-    )
 
 
 @pytest.mark.skip(
@@ -67,3 +54,18 @@ def test_hybrid_search_with_typo(result_sets: ResultSets):
     assert len(results) == 2
     assert results[0].name == "The Follow Black Hare"
     assert results[1].name == "Sungura Mjanja Refi"
+
+
+def test_search_result_computed_properties():
+    result = SearchResult(
+        project_id="0x1",
+        name="Example",
+        description_markdown="# Header\n\nText",
+        website_url="https://example.com",
+        banner_image_cid="abc123",
+        score=1.5,
+    )
+
+    assert result.banner_image_url == "https://ipfs.io/ipfs/abc123"
+    assert result.description_html == "<h1>Header</h1>\n<p>Text</p>"
+    assert result.description_plain == "Header\nText"
