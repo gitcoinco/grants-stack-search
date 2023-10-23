@@ -6,19 +6,44 @@ from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddi
 from src.data import InputProjectDocument
 from src.search import SearchEngine, SearchResult
 
+embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+
 
 class SemanticSearchEngine(SearchEngine):
     db: Chroma
 
-    def index_projects(self, project_docs: List[InputProjectDocument]) -> None:
+    def load(self, persist_directory: str) -> None:
+        logging.debug(
+            "attempting to load persisted chromadb from %s", persist_directory
+        )
+
+        persisted_db = Chroma(
+            persist_directory=persist_directory,
+            embedding_function=embedding_function,
+        )
+
+        sample = persisted_db.get(limit=1)
+        if len(sample["ids"]) == 0:
+            logging.debug(
+                "could not load persisted chromadb from %s", persist_directory
+            )
+            raise Exception("No persisted data")
+        else:
+            logging.debug("chromadb loaded from %s", persist_directory)
+            self.db = persisted_db
+
+    def index_projects(
+        self, project_docs: List[InputProjectDocument], persist_directory: str
+    ) -> None:
         start_time = time.perf_counter()
 
         raw_documents = [project_document.document for project_document in project_docs]
 
         self.db = Chroma.from_documents(
             documents=raw_documents,
-            embedding=SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"),
+            embedding=embedding_function,
             ids=[doc.metadata["project_id"] for doc in raw_documents],
+            persist_directory=persist_directory,
         )
 
         logging.debug(
@@ -26,6 +51,8 @@ class SemanticSearchEngine(SearchEngine):
             len(project_docs),
             time.perf_counter() - start_time,
         )
+
+        self.db.persist()
 
     def search(self, query_string: str) -> List[SearchResult]:
         return [

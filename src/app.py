@@ -1,4 +1,5 @@
 import logging
+from typing import Union, Literal
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
@@ -28,7 +29,10 @@ SearchResult.IPFS_GATEWAY_BASE = settings.ipfs_gateway
 project_docs = load_projects_json(settings.projects_json_path)
 
 semantic_search_engine = SemanticSearchEngine()
-semantic_search_engine.index_projects(project_docs)
+try:
+    semantic_search_engine.load(settings.chromadb_persistence_dir)
+except Exception as e:
+    semantic_search_engine.index_projects(project_docs)
 
 fulltext_search_engine = FullTextSearchEngine()
 fulltext_search_engine.index_projects(project_docs)
