@@ -1,5 +1,5 @@
 import logging
-from typing import Union, Literal
+from typing import Any
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
@@ -9,7 +9,9 @@ from src.data import load_projects_json
 from src.search import SearchResult
 from src.search_fulltext import FullTextSearchEngine
 from src.search_hybrid import combine_results
+from src.search_query import SearchQuery
 from src.search_semantic import SemanticSearchEngine
+from pprint import pprint
 
 
 ######################################################################
@@ -32,7 +34,9 @@ semantic_search_engine = SemanticSearchEngine()
 try:
     semantic_search_engine.load(settings.chromadb_persistence_dir)
 except Exception as e:
-    semantic_search_engine.index_projects(project_docs)
+    semantic_search_engine.index_projects(
+        project_docs, persist_directory=settings.chromadb_persistence_dir
+    )
 
 fulltext_search_engine = FullTextSearchEngine()
 fulltext_search_engine.index_projects(project_docs)
@@ -55,66 +59,53 @@ def get_project_by_id(project_id: str) -> SearchResult | None:
         )
 
 
-class ProjectsSearchResponse(BaseModel):
+class SearchResponse(BaseModel):
     results: list[SearchResult]
+    debug: Any
 
 
 ######################################################################
 # API ROUTES
 
 
-@app.get("/semantic-search")
-def semantic_search(q: str) -> ProjectsSearchResponse:
-    if q.strip() == "":
-        return ProjectsSearchResponse(results=[])
+@app.get("/search")
+def search(q: str) -> SearchResponse:
+    query = SearchQuery(q)
+    if not query.is_valid:
+        return SearchResponse(results=[], debug={})
 
-    results = semantic_search_engine.search(q)
+    if query.params.strategy == "semantic":
+        results = semantic_search_engine.search(query.string)
+    elif query.params.strategy == "fulltext":
+        results = fulltext_search_engine.search(query.string)
+    elif query.params.strategy == "hybrid":
+        results = combine_results(
+            semantic_results=semantic_search_engine.search(query.string),
+            fulltext_results=fulltext_search_engine.search(query.string),
+            std_dev_factor=query.params.hybrid_search_std_dev_factor,
+        )
+    else:
+        raise Exception('Unknown strategy: "%s"' % query.params.strategy)
 
-    logging.debug(
-        "semantic search for '%s' returned %d results: %s",
-        q,
-        len(results),
-        [{"name": r.name, "score": r.score} for r in results],
+    # logging.debug(
+    #     "%s search for '%s' returned %d results: %s",
+    #     query.params.strategy,
+    #     query.string,
+    #     len(results),
+    #     [{"name": r.name, "score": r.score} for r in results],
+    # )
+
+    return SearchResponse(
+        results=results[0:MAX_RESULTS_PER_STRATEGY],
+        debug={
+            "query_string": query.string,
+            "query_params": query.params.model_dump(),
+            "result_count": len(results),
+            "results_names_with_scores": [
+                {"name": r.name, "score": r.score} for r in results
+            ],
+        },
     )
-
-    return ProjectsSearchResponse(results=results[0:MAX_RESULTS_PER_STRATEGY])
-
-
-@app.get("/fulltext-search")
-def fulltext_search(q: str) -> ProjectsSearchResponse:
-    if q.strip() == "":
-        return ProjectsSearchResponse(results=[])
-
-    results = fulltext_search_engine.search(q)
-
-    logging.debug(
-        "fulltext search for '%s' returned %d results: %s",
-        q,
-        len(results),
-        [{"name": r.name, "score": r.score} for r in results],
-    )
-
-    return ProjectsSearchResponse(results=results[0:MAX_RESULTS_PER_STRATEGY])
-
-
-@app.get("/hybrid-search")
-def hybrid_search(q: str) -> ProjectsSearchResponse:
-    if q.strip() == "":
-        return ProjectsSearchResponse(results=[])
-
-    results = combine_results(
-        semantic_results=semantic_search_engine.search(q),
-        fulltext_results=fulltext_search_engine.search(q),
-    )
-
-    logging.debug(
-        "hybrid search for '%s' returned %d results: %s",
-        q,
-        len(results),
-        [{"name": r.name, "score": r.score} for r in results],
-    )
-
-    return ProjectsSearchResponse(results=results[0:MAX_RESULTS_PER_STRATEGY])
 
 
 @app.get("/projects/{project_id}")

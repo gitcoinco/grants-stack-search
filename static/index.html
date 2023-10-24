@@ -42,6 +42,7 @@
         overflow: hidden;
         font-size: 12px;
         position: relative;
+        margin-top: calc(var(--block-spacing-vertical) * 0.125);
       }
 
       article.project-summary > header {
@@ -73,13 +74,19 @@
         text-align: center;
       }
 
-      details.inspect {
+      details.inspect pre {
         font-size: 75%;
-        font-family: monospace;
+        white-space: pre-wrap;
+        padding: 1em;
       }
 
-      details.inspect pre {
-        white-space: pre-wrap;
+      .examples code,
+      .examples dd {
+        font-size: 60%;
+      }
+      dd {
+        margin-top: calc(var(--block-spacing-vertical) * 0.25);
+        margin-bottom: calc(var(--block-spacing-vertical) * 0.25);
       }
     </style>
   </head>
@@ -87,94 +94,110 @@
   <body hx-ext="client-side-templates">
     <main class="container">
       <section>
-        <div class="grid">
-          <div>
-            <input
-              type="search"
-              autofocus
-              name="q"
-              placeholder="Semantic search..."
-              autocomplete="off"
-              hx-get="/semantic-search"
-              hx-target="#projects"
-              nunjucks-template="project-list-tmpl"
-            />
-          </div>
+        <input
+          type="search"
+          autofocus
+          name="q"
+          placeholder="Search..."
+          autocomplete="off"
+          hx-get="/search"
+          hx-target="#projects"
+          nunjucks-template="project-list-tmpl"
+        />
 
-          <div>
-            <input
-              type="search"
-              autofocus
-              name="q"
-              placeholder="Full text search..."
-              autocomplete="off"
-              hx-get="/fulltext-search"
-              hx-target="#projects"
-              nunjucks-template="project-list-tmpl"
-            />
-          </div>
+        <details class="examples">
+          <summary>Examples</summary>
 
-          <div>
-            <input
-              type="search"
-              autofocus
-              name="q"
-              placeholder="Hybrid search..."
-              autocomplete="off"
-              hx-get="/hybrid-search"
-              hx-target="#projects"
-              nunjucks-template="project-list-tmpl"
-            />
-          </div>
-        </div>
-        <div style="text-align: center">
-          Categories:
+          <dl>
+            <dt>
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=open%20source%20--strategy%3Dsemantic"
+                  hx-target="#projects"
+                  nunjucks-template="project-list-tmpl"
+                  >open source --strategy=semantic</a
+                >
+              </code>
 
-          <a
-            href="#"
-            hx-get="/semantic-search?q=open+source"
-            hx-target="#projects"
-            nunjucks-template="project-list-tmpl"
-          >
-            open source</a
-          >,
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=AI%20--strategy%3Dsemantic"
+                  hx-target="#projects"
+                  nunjucks-template="project-list-tmpl"
+                  >AI --strategy=semantic</a
+                >
+              </code>
 
-          <a
-            href="#"
-            hx-get="/semantic-search?q=AI"
-            hx-target="#projects"
-            nunjucks-template="project-list-tmpl"
-          >
-            AI</a
-          >,
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=education%20--strategy%3Dsemantic"
+                  hx-target="#projects"
+                  nunjucks-template="project-list-tmpl"
+                  >education --strategy=semantic</a
+                >
+              </code>
+            </dt>
+            <dd>
+              Use semantic search to simulate categories. Can only be used in
+              links as it requires setting the search type ahead of time instead
+              of guessing it from the content of the query.
+            </dd>
 
-          <a
-            href="#"
-            hx-get="/semantic-search?q=public+goods"
-            hx-target="#projects"
-            nunjucks-template="project-list-tmpl"
-          >
-            public goods</a
-          >,
+            <dt>
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-std-dev-factor%3D3"
+                  hx-target="#projects"
+                  nunjucks-template="project-list-tmpl"
+                  >black hare --strategy=hybrid
+                  --hybrid-search-std-dev-factor=3</a
+                >
+              </code>
+            </dt>
+            <dd>
+              When the fulltext side of a hybrid search returns more than 2
+              results, only the outliers are used from it. Outliers are defined
+              as all results above N standard deviations from the median, with
+              N=3 by default. Higher values mean fewer results.
+            </dd>
 
-          <a
-            href="#"
-            hx-get="/semantic-search?q=nft"
-            hx-target="#projects"
-            nunjucks-template="project-list-tmpl"
-          >
-            NFTs</a
-          >,
+            <dt>
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-std-dev-factor%3D1"
+                  hx-target="#projects"
+                  nunjucks-template="project-list-tmpl"
+                >
+                  black hare --strategy=hybrid
+                  --hybrid-search-std-dev-factor=1</a
+                >
+              </code>
+            </dt>
+            <dd>
+              Use more results from the fulltext side by decreasing the standard
+              deviation factor.
+            </dd>
 
-          <a
-            href="#"
-            hx-get="/semantic-search?q=education"
-            hx-target="#projects"
-            nunjucks-template="project-list-tmpl"
-          >
-            education</a
-          >
-        </div>
+            <dt>
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=blck%20hare%20--strategy%3Dhybrid"
+                  hx-target="#projects"
+                  nunjucks-template="project-list-tmpl"
+                >
+                  blck hare --strategy=hybrid</a
+                >
+              </code>
+            </dt>
+            <dd>Both strategies have a degree of resistance to typos.</dd>
+          </dl>
+        </details>
       </section>
 
       <section id="projects"></section>
@@ -207,8 +230,11 @@
         </div>
 
         <details class="inspect">
-          <summary>Inspect API results for this search...</summary>
+          <summary>API response</summary>
+          <h5>Results</h5>
           <pre>{{ results | dump(2) }}</pre>
+          <h5>Debug</h5>
+          <pre>{{ debug | dump(2) }}</pre>
         </details>
 
         {% else %}
@@ -241,5 +267,18 @@
         </section>
       </template>
     </main>
+
+    <script>
+      document.querySelector(".examples").addEventListener(
+        "click",
+        (e) => {
+          if (e.target.tagName === "A") {
+            document.querySelector("input[type=search]").value =
+              e.target.textContent.replace(/\s+/g, " ");
+          }
+        },
+        false,
+      );
+    </script>
   </body>
 </html>

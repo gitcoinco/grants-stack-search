@@ -4,10 +4,14 @@ import numpy as np
 
 
 def combine_results(
-    semantic_results: List[SearchResult], fulltext_results: List[SearchResult]
+    semantic_results: List[SearchResult],
+    fulltext_results: List[SearchResult],
+    std_dev_factor=3,
 ) -> List[SearchResult]:
     if len(fulltext_results) > 2:
-        fulltext_subset = get_upper_outliers(fulltext_results, std_factor=3)
+        fulltext_subset = get_upper_outliers(
+            fulltext_results, std_dev_factor=std_dev_factor
+        )
     else:
         fulltext_subset = fulltext_results
 
@@ -17,9 +21,11 @@ def combine_results(
 
 
 # pick items that are greater than `std_factor` standard deviations from the mean
-def get_upper_outliers(results: List[SearchResult], std_factor=3) -> List[SearchResult]:
+def get_upper_outliers(
+    results: List[SearchResult], std_dev_factor=3
+) -> List[SearchResult]:
     scores = [r.score for r in results]
-    cutoff = np.mean(scores) + np.std(scores) * std_factor
+    cutoff = np.mean(scores) + np.std(scores) * std_dev_factor
     return [r for r in results if r.score > cutoff]
 
 
