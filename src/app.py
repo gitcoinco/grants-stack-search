@@ -2,7 +2,7 @@ import logging
 from typing import Any
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from src.config import Settings
 from src.data import load_projects_json
@@ -70,7 +70,12 @@ class SearchResponse(BaseModel):
 
 @app.get("/search")
 def search(q: str) -> SearchResponse:
-    query = SearchQuery(q)
+    try:
+        query = SearchQuery(q)
+    except Exception as e:
+        logging.error("error parsing query: %s", e)
+        raise HTTPException(status_code=400, detail=str(e))
+
     if not query.is_valid:
         return SearchResponse(results=[], debug={})
 
@@ -86,14 +91,6 @@ def search(q: str) -> SearchResponse:
         )
     else:
         raise Exception('Unknown strategy: "%s"' % query.params.strategy)
-
-    # logging.debug(
-    #     "%s search for '%s' returned %d results: %s",
-    #     query.params.strategy,
-    #     query.string,
-    #     len(results),
-    #     [{"name": r.name, "score": r.score} for r in results],
-    # )
 
     return SearchResponse(
         results=results[0:MAX_RESULTS_PER_STRATEGY],

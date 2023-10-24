@@ -14,10 +14,11 @@
     />
     <title>Projects</title>
     <script src="https://unpkg.com/nunjucks@3.1.7/browser/nunjucks.min.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.8.5"></script>
-    <script src="https://unpkg.com/htmx.org@1.8.5/dist/ext/client-side-templates.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.8.5/dist/ext/json-enc.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.8.5/dist/ext/debug.js"></script>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
+    <script src="https://unpkg.com/htmx.org/dist/ext/debug.js"></script>
 
     <style type="text/css">
       @media (min-width: 1200px) {
@@ -91,7 +92,7 @@
     </style>
   </head>
 
-  <body hx-ext="client-side-templates">
+  <body hx-ext="client-side-templates,response-targets">
     <main class="container">
       <section>
         <input
@@ -203,7 +204,9 @@
       <section id="projects"></section>
 
       <template id="project-list-tmpl">
-        {% if results | length %}
+        {% if detail is string %}
+        <article>{{ detail }}</article>
+        {% elif results | length %}
 
         <div class="responsive-grid">
           {% for p in results %}
@@ -239,6 +242,7 @@
 
         {% else %}
 
+        <p>{{ detail }}</p>
         <p>No results found. :(</p>
 
         {% endif %}
