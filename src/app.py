@@ -11,7 +11,6 @@ from src.search_fulltext import FullTextSearchEngine
 from src.search_hybrid import combine_results
 from src.search_query import SearchQuery
 from src.search_semantic import SemanticSearchEngine
-from pprint import pprint
 
 
 ######################################################################
@@ -32,7 +31,8 @@ project_docs = load_projects_json(settings.projects_json_path)
 
 semantic_search_engine = SemanticSearchEngine()
 try:
-    semantic_search_engine.load(settings.chromadb_persistence_dir)
+    if settings.chromadb_persistence_dir is not None:
+        semantic_search_engine.load(settings.chromadb_persistence_dir)
 except Exception as e:
     semantic_search_engine.index_projects(
         project_docs, persist_directory=settings.chromadb_persistence_dir

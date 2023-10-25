@@ -33,7 +33,7 @@ class SemanticSearchEngine(SearchEngine):
             self.db = persisted_db
 
     def index_projects(
-        self, project_docs: List[InputProjectDocument], persist_directory: str
+        self, project_docs: List[InputProjectDocument], persist_directory: str | None
     ) -> None:
         start_time = time.perf_counter()
 
