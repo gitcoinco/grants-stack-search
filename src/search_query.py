@@ -6,7 +6,8 @@ import argparse
 
 class SearchParams(BaseModel):
     strategy: Union[Literal["fulltext"], Literal["semantic"], Literal["hybrid"]]
-    hybrid_search_std_dev_factor: int = Field(ge=1, le=5)
+    hybrid_search_fulltext_std_dev_factor: int = Field(ge=1, le=5)
+    hybrid_search_semantic_score_cutoff: float = Field(ge=0, lt=1)
     keywords: List[str]
 
 
@@ -16,15 +17,16 @@ class SearchQuery:
 
         parser = argparse.ArgumentParser()
         parser.add_argument("keywords", nargs="*")
-        parser.add_argument("--strategy", default="fulltext")
-        parser.add_argument("--hybrid-search-std-dev-factor", default=3)
+        parser.add_argument("--strategy", default="hybrid")
+        parser.add_argument("--hybrid-search-fulltext-std-dev-factor", default=3)
+        parser.add_argument("--hybrid-search-semantic-score-cutoff", default=0.15)
 
         try:
             self.params = SearchParams(
                 **vars(parser.parse_args(shlex.split(query_string)))
             )
         except SystemExit:
-            raise Exception('error parsing search query: "%s"' % query_string)
+            raise Exception('Invalid search query: "%s"' % query_string)
 
     @property
     def string(self) -> str:

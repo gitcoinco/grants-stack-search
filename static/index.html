@@ -103,10 +103,16 @@
           autocomplete="off"
           hx-get="/search"
           hx-target="#projects"
+          hx-target-400="#projects"
           nunjucks-template="project-list-tmpl"
         />
 
-        <details class="examples">
+        <details
+          class="examples"
+          hx-target="#projects"
+          hx-target-400="#projects"
+          nunjucks-template="project-list-tmpl"
+        >
           <summary>Examples</summary>
 
           <dl>
@@ -115,28 +121,18 @@
                 <a
                   href="#"
                   hx-get="/search?q=open%20source%20--strategy%3Dsemantic"
-                  hx-target="#projects"
-                  nunjucks-template="project-list-tmpl"
                   >open source --strategy=semantic</a
                 >
               </code>
 
               <code>
-                <a
-                  href="#"
-                  hx-get="/search?q=AI%20--strategy%3Dsemantic"
-                  hx-target="#projects"
-                  nunjucks-template="project-list-tmpl"
+                <a href="#" hx-get="/search?q=AI%20--strategy%3Dsemantic"
                   >AI --strategy=semantic</a
                 >
               </code>
 
               <code>
-                <a
-                  href="#"
-                  hx-get="/search?q=education%20--strategy%3Dsemantic"
-                  hx-target="#projects"
-                  nunjucks-template="project-list-tmpl"
+                <a href="#" hx-get="/search?q=education%20--strategy%3Dsemantic"
                   >education --strategy=semantic</a
                 >
               </code>
@@ -151,11 +147,9 @@
               <code>
                 <a
                   href="#"
-                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-std-dev-factor%3D3"
-                  hx-target="#projects"
-                  nunjucks-template="project-list-tmpl"
+                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-fulltext-std-dev-factor%3D3"
                   >black hare --strategy=hybrid
-                  --hybrid-search-std-dev-factor=3</a
+                  --hybrid-search-fulltext-std-dev-factor=3</a
                 >
               </code>
             </dt>
@@ -170,12 +164,9 @@
               <code>
                 <a
                   href="#"
-                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-std-dev-factor%3D1"
-                  hx-target="#projects"
-                  nunjucks-template="project-list-tmpl"
-                >
-                  black hare --strategy=hybrid
-                  --hybrid-search-std-dev-factor=1</a
+                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-fulltext-std-dev-factor%3D1"
+                  >black hare --strategy=hybrid
+                  --hybrid-search-fulltext-std-dev-factor=1</a
                 >
               </code>
             </dt>
@@ -186,17 +177,28 @@
 
             <dt>
               <code>
-                <a
-                  href="#"
-                  hx-get="/search?q=blck%20hare%20--strategy%3Dhybrid"
-                  hx-target="#projects"
-                  nunjucks-template="project-list-tmpl"
-                >
-                  blck hare --strategy=hybrid</a
+                <a href="#" hx-get="/search?q=blck%20hare%20--strategy%3Dhybrid"
+                  >blck hare --strategy=hybrid</a
                 >
               </code>
             </dt>
             <dd>Both strategies have a degree of resistance to typos.</dd>
+
+            <dt>
+              <code>
+                <a
+                  href="#"
+                  hx-get="/search?q=black%20hare%20--strategy%3Dhybrid%20--hybrid-search-semantic-score-cutoff%3D0.05"
+                  >black hare --strategy=hybrid
+                  --hybrid-search-semantic-score-cutoff=0.05</a
+                >
+              </code>
+            </dt>
+            <dd>
+              Use more results from the semantic side by decreasing the minimum
+              relevance score a result has to have. Default is 0.15. Example
+              shows the drawback of selecting too low a score.
+            </dd>
           </dl>
         </details>
       </section>
@@ -205,7 +207,9 @@
 
       <template id="project-list-tmpl">
         {% if detail is string %}
-        <article>{{ detail }}</article>
+        <article>
+          <pre><code>{{ detail }}</code></pre>
+        </article>
         {% elif results | length %}
 
         <div class="responsive-grid">

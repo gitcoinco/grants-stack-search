@@ -87,7 +87,8 @@ def search(q: str) -> SearchResponse:
         results = combine_results(
             semantic_results=semantic_search_engine.search(query.string),
             fulltext_results=fulltext_search_engine.search(query.string),
-            std_dev_factor=query.params.hybrid_search_std_dev_factor,
+            fulltext_std_dev_factor=query.params.hybrid_search_fulltext_std_dev_factor,
+            semantic_score_cutoff=query.params.hybrid_search_semantic_score_cutoff,
         )
     else:
         raise Exception('Unknown strategy: "%s"' % query.params.strategy)

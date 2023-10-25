@@ -1,21 +1,26 @@
 from typing import List
 from src.search import SearchResult
 import numpy as np
+import logging
 
 
 def combine_results(
     semantic_results: List[SearchResult],
     fulltext_results: List[SearchResult],
-    std_dev_factor=3,
+    fulltext_std_dev_factor=3,
+    semantic_score_cutoff=0.15,
 ) -> List[SearchResult]:
     if len(fulltext_results) > 2:
         fulltext_subset = get_upper_outliers(
-            fulltext_results, std_dev_factor=std_dev_factor
+            fulltext_results, std_dev_factor=fulltext_std_dev_factor
         )
+
     else:
         fulltext_subset = fulltext_results
 
-    semantic_subset = filter_out_low_semantic_score(semantic_results, cutoff=0.15)
+    semantic_subset = filter_out_low_semantic_score(
+        semantic_results, cutoff=semantic_score_cutoff
+    )
 
     return fulltext_subset + semantic_subset
 

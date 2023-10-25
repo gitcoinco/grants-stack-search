@@ -56,6 +56,21 @@ def test_hybrid_search_with_typo(result_sets: ResultSets):
     assert results[1].name == "Sungura Mjanja Refi"
 
 
+def test_hybrid_search_with_custom_fulltext_std_dev_factor(result_sets: ResultSets):
+    results = combine_results(
+        semantic_results=result_sets.semantic_black_hare,
+        fulltext_results=result_sets.fulltext_black_hare,
+        fulltext_std_dev_factor=1,
+    )
+    assert len(results) == 2
+    assert results[0].name == "The Follow Black Hare"
+    assert results[1].name == "Blacks on Blockchain"
+
+
+def test_hybrid_search_with_custom_semantic_score_cutoff(result_sets: ResultSets):
+    pass
+
+
 def test_search_result_computed_properties():
     result = SearchResult(
         project_id="0x1",
