@@ -30,13 +30,15 @@ SearchResult.IPFS_GATEWAY_BASE = settings.ipfs_gateway
 project_docs = load_projects_json(settings.projects_json_path)
 
 semantic_search_engine = SemanticSearchEngine()
-try:
-    if settings.chromadb_persistence_dir is not None:
+if settings.chromadb_persistence_dir is None:
+    semantic_search_engine.index_projects(project_docs)
+else:
+    try:
         semantic_search_engine.load(settings.chromadb_persistence_dir)
-except Exception as e:
-    semantic_search_engine.index_projects(
-        project_docs, persist_directory=settings.chromadb_persistence_dir
-    )
+    except Exception as e:
+        semantic_search_engine.index_projects(
+            project_docs, persist_directory=settings.chromadb_persistence_dir
+        )
 
 fulltext_search_engine = FullTextSearchEngine()
 fulltext_search_engine.index_projects(project_docs)
