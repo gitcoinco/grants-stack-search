@@ -1,48 +1,11 @@
 from langchain.document_loaders import JSONLoader
 from rake_nltk import Rake
-from langchain.chains.retrieval_qa.base import BaseRetrievalQA
-from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 import pytest
-import rich
 import nltk
-from langchain.vectorstores import Chroma
 from pprint import pprint
 
 
 # NOTE: these are not real tests, we're using pytest as a testbed.
-
-
-@pytest.mark.skip
-def test_experiment_similarity_search_with_chroma_db(chroma_db: Chroma):
-    query = "education"
-    docs = chroma_db.similarity_search(query)
-
-    print("EDUCATION:")
-    for doc in docs[0:5]:
-        print(" - ", doc.metadata["name"])
-
-    query = "market-making"
-    docs = chroma_db.similarity_search(query)
-
-    print("MARKET MAKING: ")
-    for doc in docs[0:5]:
-        print(" - ", doc.metadata["name"])
-
-
-@pytest.mark.skip
-def test_experiment_qa_with_vector_store_index(
-    vector_store_index: VectorStoreIndexWrapper,
-):
-    query = "which projects relate to education?"
-    answer = vector_store_index.query_with_sources(query)
-    rich.print(answer)
-
-
-@pytest.mark.skip
-def test_experiment_qa_with_chain(qa_chain: BaseRetrievalQA):
-    question = "which projects relate to education?"
-    response = qa_chain({"question": question})
-    rich.print(response)
 
 
 @pytest.mark.skip

@@ -1,15 +1,6 @@
 from typing import List
-import logging
-from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.schema import Document
-from langchain.vectorstores import Chroma
 from langchain.document_loaders import JSONLoader
-from langchain.chains import RetrievalQA
-from langchain.chains.retrieval_qa.base import BaseRetrievalQA
-from langchain.llms import OpenAI
-from langchain.indexes.vectorstore import VectorStoreIndexWrapper
-from langchain.document_loaders import JSONLoader
-from langchain.indexes import VectorstoreIndexCreator
 
 
 class InvalidInputProjectDocumentException(Exception):
@@ -60,52 +51,3 @@ def get_json_document_metadata(record: dict, metadata: dict) -> dict:
     if banner_image_cid is not None:
         metadata["banner_image_cid"] = banner_image_cid
     return metadata
-
-
-def load_project_dataset_into_chroma_db(projects_json_path: str) -> Chroma:
-    logging.debug(f"loading {projects_json_path}...")
-    project_documents = load_projects_json(projects_json_path)
-
-    generic_documents = [
-        project_document.document for project_document in project_documents
-    ]
-    logging.debug("indexing...")
-    db = Chroma.from_documents(
-        documents=generic_documents,
-        embedding=SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2"),
-        ids=[doc.metadata["project_id"] for doc in generic_documents],
-    )
-    return db
-
-
-def load_project_dataset_into_vectorstore(
-    projects_json_path: str,
-) -> VectorStoreIndexWrapper:
-    logging.debug(f"loading {projects_json_path}...")
-    project_documents = load_projects_json(projects_json_path)
-    generic_documents = [
-        project_document.document for project_document in project_documents
-    ]
-    index = VectorstoreIndexCreator().from_documents(generic_documents)
-    return index
-
-
-def get_qa_chain(projects_json_path: str) -> BaseRetrievalQA:
-    logging.debug(f"loading {projects_json_path}...")
-    project_documents = load_projects_json(projects_json_path)
-    generic_documents = [
-        project_document.document for project_document in project_documents
-    ]
-
-    logging.debug(f"creating index from {projects_json_path} ...")
-    index = VectorstoreIndexCreator().from_documents(generic_documents)
-
-    logging.debug("constructing qa chain")
-    chain = RetrievalQA.from_chain_type(
-        llm=OpenAI(),
-        chain_type="stuff",
-        retriever=index.vectorstore.as_retriever(),
-        input_key="question",
-    )
-
-    return chain
