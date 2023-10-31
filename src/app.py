@@ -1,11 +1,12 @@
 import logging
+from pprint import pprint
 from typing import Any
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from src.config import Settings
-from src.data import load_projects_json
+from src.data import load_projects_json, load_applications_dir
 from src.search import SearchResult
 from src.search_fulltext import FullTextSearchEngine
 from src.search_hybrid import combine_results
@@ -27,7 +28,7 @@ SearchResult.IPFS_GATEWAY_BASE = settings.ipfs_gateway
 ######################################################################
 # STATE
 
-project_docs = load_projects_json(settings.projects_json_path)
+project_docs = load_applications_dir(settings.applications_dir)
 
 semantic_search_engine = SemanticSearchEngine()
 if settings.chromadb_persistence_dir is None:

@@ -1,8 +1,8 @@
 ## Installation
 
 ```sh
-$ git clone https://github.com/gitcoinco/search-spike
-$ cd search-spike
+$ git clone https://github.com/gitcoinco/search
+$ cd search
 $ poetry install
 ```
 
@@ -10,28 +10,58 @@ $ poetry install
 
 ## Setup
 
-Copy `.env.example` to `.env`, then download `projects.json` and set the `PROJECTS_JSON_PATH` accordingly:
+Download data for a given combination of chain and round IDs:
 
 ```sh
-$ cp .env.example .env
-$ wget -O /tmp/projects.json https://indexer-staging.fly.dev/data/1/projects.json
-$ echo 'PROJECTS_JSON_PATH=/tmp/projects.json' >>.env
+$ APPLICATIONS_DOWNLOADER_DOWNLOAD_DIR=.var/applications_by_round \
+  APPLICATIONS_DOWNLOADER_CHAIN_ID=10 \
+  APPLICATIONS_DOWNLOADER_ROUND_IDS=0x10be322DE44389DeD49c0b2b73d8c3A1E3B6D871,0xc5FdF5cFf79e92FAc1d6Efa725c319248D279200,0x9331FDe4Db7b9d9d1498C09d30149929f24cF9D5,0xb6Be0eCAfDb66DD848B0480db40056Ff94A9465d,0x2871742B184633f8DC8546c6301cbC209945033e,0x8de918F0163b2021839A8D84954dD7E8e151326D \
+  poetry run task download_applications
 ```
 
-## Run service and web UI:
+Copy `.env.example` to `.env` and edit `.env` so that `APPLICATIONS_DIR` points to where you downloaded applications files.
+
+## Run service
 
 ```sh
 poetry run task watch_run_app
 ```
 
-Then open http://localhost:8000/static/index.html
+Useful URLs:
 
-## Run experiments
+- a UI testbed http://localhost:8000/static/index.html
+- API docs: http://localhost:8000/docs
 
-We're (ab)using pytest as a testbed for experiments with hot reload. (Use `@pytest.mark.only` and `@pytest.mark.skip` to switch experiments on and off.)
+## Run tests
+
+One-shot:
+
+```sh
+poetry run task test
+```
+
+With file watching:
 
 ```sh
 poetry run task test_watch
 ```
 
-Experiments other than the search based on Chroma DB may be out of date.
+## Build and deploy
+
+Build locally:
+
+```sh
+$ docker buildx build . --platform=linux/amd64 -t gitcoin-search
+```
+
+Build and deploy to Fly:
+
+```sh
+$ fly deploy
+```
+
+Inspect the Dockerfile to see what build arguments are available to customize the build. E.g. to specify a different set of rounds:
+
+```sh
+$ fly deploy --build-arg APPLICATIONS_DOWNLOADER_ROUND_IDS=0x123,0x456,0x789
+```

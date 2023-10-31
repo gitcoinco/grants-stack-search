@@ -40,7 +40,6 @@ class FullTextSearchEngine(SearchEngine):
         return [
             SearchResult.from_input_document(
                 input_document=self.document_index[raw_result["ref"]],
-                # TODO normalize score to 0..1
                 score=raw_result["score"],
             )
             for raw_result in self.search_index.search(query_string)

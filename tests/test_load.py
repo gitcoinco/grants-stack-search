@@ -1,7 +1,8 @@
 import pytest
 import pathlib
 import json
-from src.data import load_projects_json
+from src.data import load_projects_json, load_applications_dir
+from pprint import pprint
 
 
 def test_load_valid_document(tmp_path: pathlib.Path):
@@ -130,3 +131,15 @@ def test_accept_document_without_banner(tmp_path: pathlib.Path):
 
     documents = load_projects_json(str(projects_json))
     assert len(documents) == 1
+
+
+def test_load_applications_dir():
+    input_documents = load_applications_dir(
+        "tests/fixtures/sample_applications_by_round"
+    )
+    assert len(input_documents) == 62
+
+    input_documents = load_applications_dir(
+        "tests/fixtures/sample_applications_by_round", filter_duplicate_projects=False
+    )
+    assert len(input_documents) == 64

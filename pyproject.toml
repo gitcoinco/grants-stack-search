@@ -43,7 +43,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.taskipy.tasks]
 test_watch = "ptw . -- --capture=no -vv"
+test = "pytest"
 watch_run_app = "uvicorn src.app:app --reload"
+download_applications = "python src/scripts/applications_downloader.py"
 
 [tool.pyright]
 include = ["src", "tests"]

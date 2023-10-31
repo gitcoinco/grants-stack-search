@@ -1,6 +1,6 @@
 from typing import List
 from langchain.schema import Document
-from langchain.document_loaders import JSONLoader
+from langchain.document_loaders import JSONLoader, DirectoryLoader
 
 
 class InvalidInputProjectDocumentException(Exception):
@@ -37,6 +37,43 @@ def load_projects_json(projects_json_path: str) -> List[InputProjectDocument]:
     for generic_document in loader.load():
         try:
             documents.append(InputProjectDocument(generic_document))
+        except InvalidInputProjectDocumentException:
+            pass
+
+    return documents
+
+
+def load_applications_dir(
+    applications_dir_path: str, filter_duplicate_projects=True
+) -> List[InputProjectDocument]:
+    loader = DirectoryLoader(
+        applications_dir_path,
+        glob="*.json",
+        show_progress=True,
+        loader_cls=JSONLoader,  # type: ignore -- typings seem to require an UnstructuredLoader
+        loader_kwargs={
+            "jq_schema": ".[] | { id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg }",
+            "content_key": "description",
+            "metadata_func": get_json_document_metadata,
+            "text_content": False,
+        },
+    )
+
+    already_loaded_projects = {}
+
+    documents: List[InputProjectDocument] = []
+    for generic_document in loader.load():
+        try:
+            input_document = InputProjectDocument(generic_document)
+            project_id = input_document.document.metadata.get("project_id")
+            if (
+                filter_duplicate_projects
+                and already_loaded_projects.get(project_id, False) == True
+            ):
+                pass
+            else:
+                documents.append(input_document)
+                already_loaded_projects[project_id] = True
         except InvalidInputProjectDocumentException:
             pass
 
