@@ -20,6 +20,8 @@ class SemanticSearchEngine(SearchEngine):
         persisted_db = Chroma(
             persist_directory=persist_directory,
             embedding_function=embedding_function,
+            # Prevents negative scores and consequent UserWarning. See https://github.com/langchain-ai/langchain/issues/10864
+            collection_metadata={"hnsw:space": "cosine"},
         )
 
         sample = persisted_db.get(limit=1)
@@ -46,6 +48,8 @@ class SemanticSearchEngine(SearchEngine):
             embedding=embedding_function,
             ids=[doc.metadata["project_id"] for doc in raw_documents],
             persist_directory=persist_directory,
+            # Prevents negative scores and consequent UserWarning. See https://github.com/langchain-ai/langchain/issues/10864
+            collection_metadata={"hnsw:space": "cosine"},
         )
 
         logging.debug(
@@ -60,8 +64,8 @@ class SemanticSearchEngine(SearchEngine):
         return [
             SearchResult.from_input_document(
                 input_document=InputProjectDocument(raw_doc),
-                # TODO normalize score to 0..1
-                score=score,
+                search_score=score,
+                search_type="semantic",
             )
             for raw_doc, score in self.db.similarity_search_with_relevance_scores(
                 query_string, k=10

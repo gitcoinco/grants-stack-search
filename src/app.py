@@ -102,8 +102,8 @@ def search(q: str) -> SearchResponse:
             "query_string": query.string,
             "query_params": query.params.model_dump(),
             "result_count": len(results),
-            "results_names_with_scores": [
-                {"name": r.name, "score": r.score} for r in results
+            "results_names_with_search_meta": [
+                {"name": r.name, "meta": r.search_meta} for r in results
             ],
         },
     )

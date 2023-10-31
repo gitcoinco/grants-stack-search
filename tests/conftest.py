@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import pickle
 import os
-from typing import List
+from typing import List, Literal, Union
 from langchain.indexes.vectorstore import VectorStoreIndexWrapper
 from langchain.vectorstores import Chroma
 from langchain.chains.retrieval_qa.base import BaseRetrievalQA
@@ -12,12 +12,16 @@ from src.data import (
 import pytest
 import logging
 
-from src.search import SearchResult
+from src.search import SearchEngine, SearchResult
+from src.search_fulltext import FullTextSearchEngine
+from src.search_semantic import SemanticSearchEngine
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
+SEARCH_RESULTS_FIXTURES_DIR = "tests/fixtures/search_results"
+# TODO: change to reflect the fact that we now process applications files instead of projects file
 SAMPLE_PROJECTS_JSON_FILE = os.path.join(
     os.path.dirname(__file__), "fixtures/sample-projects.json"
 )
@@ -42,63 +46,90 @@ class ResultSets:
 
 @pytest.fixture(scope="session")
 def result_sets() -> ResultSets:
-    # To create a results fixture:
-    #
-    # project_docs = load_projects_json(PROJECTS_JSON_FILE)
-    # fts_engine = FullTextSearchEngine()
-    # fts_engine.index_projects(project_docs)
-    # with open(
-    #     "tests/fixtures/search_results_semantic_nature_preservation.pickle", "wb"
-    # ) as file:
-    #     pickle.dump(ss_engine.search("nature preservation"), file)
+    def generate_search_result_fixture(
+        search_engine: SearchEngine, query: str
+    ) -> List[SearchResult]:
+        search_type = search_engine.__class__.__name__.lower().replace(
+            "searchengine", ""
+        )
+        query_filename_part = query.replace(" ", "_")
+        fixture_filename = (
+            f"{SEARCH_RESULTS_FIXTURES_DIR}/{search_type}_{query_filename_part}.pickle"
+        )
 
-    # project_docs = load_projects_json(".var/1/projects.json")
-    # fts_engine = FullTextSearchEngine()
-    # fts_engine.index_projects(project_docs)
-    # ss_engine = SemanticSearchEngine()
-    # ss_engine.index_projects(project_docs)
+        os.makedirs(SEARCH_RESULTS_FIXTURES_DIR, exist_ok=True)
+        results = search_engine.search(query)
+        with open(fixture_filename, "wb") as file:
+            pickle.dump(results, file)
+        return results
 
-    # with open("tests/fixtures/search_results_fulltext_blck_hare.pickle", "wb") as file:
-    #     pickle.dump(fts_engine.search("blck hare"), file)
+    def load_search_result_fixture(
+        search_type: Union[Literal["fulltext"], Literal["semantic"]], query: str
+    ) -> List[SearchResult]:
+        query_filename_part = query.replace(" ", "_")
+        fixture_filename = (
+            f"{SEARCH_RESULTS_FIXTURES_DIR}/{search_type}_{query_filename_part}.pickle"
+        )
+        with open(fixture_filename, "rb") as file:
+            return pickle.load(file)
 
-    # with open("tests/fixtures/search_results_semantic_blck_hare.pickle", "wb") as file:
-    #     pickle.dump(ss_engine.search("blck hare"), file)
+    if os.path.isdir(SEARCH_RESULTS_FIXTURES_DIR):
+        return ResultSets(
+            fulltext_black_hare=load_search_result_fixture(
+                search_type="fulltext", query="black hare"
+            ),
+            semantic_black_hare=load_search_result_fixture(
+                search_type="semantic", query="black hare"
+            ),
+            fulltext_education=load_search_result_fixture(
+                search_type="fulltext", query="education"
+            ),
+            semantic_education=load_search_result_fixture(
+                search_type="semantic", query="education"
+            ),
+            fulltext_nature_preservation=load_search_result_fixture(
+                search_type="fulltext", query="nature preservation"
+            ),
+            semantic_nature_preservation=load_search_result_fixture(
+                search_type="semantic", query="nature preservation"
+            ),
+            fulltext_blck_hare=load_search_result_fixture(
+                search_type="fulltext", query="blck hare"
+            ),
+            semantic_blck_hare=load_search_result_fixture(
+                search_type="semantic", query="blck hare"
+            ),
+        )
+    else:
+        project_docs = load_projects_json(SAMPLE_PROJECTS_JSON_FILE)
+        fts_engine = FullTextSearchEngine()
+        fts_engine.index_projects(project_docs)
+        ss_engine = SemanticSearchEngine()
+        ss_engine.index_projects(project_docs)
 
-    with open("tests/fixtures/search_results_fulltext_black_hare.pickle", "rb") as file:
-        fulltext_results_black_hare = pickle.load(file)
-
-    with open("tests/fixtures/search_results_semantic_black_hare.pickle", "rb") as file:
-        semantic_results_black_hare = pickle.load(file)
-
-    with open("tests/fixtures/search_results_fulltext_education.pickle", "rb") as file:
-        fulltext_results_education = pickle.load(file)
-
-    with open("tests/fixtures/search_results_semantic_education.pickle", "rb") as file:
-        semantic_results_education = pickle.load(file)
-
-    with open(
-        "tests/fixtures/search_results_fulltext_nature_preservation.pickle", "rb"
-    ) as file:
-        fulltext_results_nature_preservation = pickle.load(file)
-
-    with open(
-        "tests/fixtures/search_results_semantic_nature_preservation.pickle", "rb"
-    ) as file:
-        semantic_results_nature_preservation = pickle.load(file)
-
-    with open("tests/fixtures/search_results_fulltext_blck_hare.pickle", "rb") as file:
-        fulltext_results_blck_hare = pickle.load(file)
-
-    with open("tests/fixtures/search_results_semantic_blck_hare.pickle", "rb") as file:
-        semantic_results_blck_hare = pickle.load(file)
-
-    return ResultSets(
-        fulltext_black_hare=fulltext_results_black_hare,
-        semantic_black_hare=semantic_results_black_hare,
-        fulltext_education=fulltext_results_education,
-        semantic_education=semantic_results_education,
-        fulltext_nature_preservation=fulltext_results_nature_preservation,
-        semantic_nature_preservation=semantic_results_nature_preservation,
-        fulltext_blck_hare=fulltext_results_blck_hare,
-        semantic_blck_hare=semantic_results_blck_hare,
-    )
+        return ResultSets(
+            fulltext_black_hare=generate_search_result_fixture(
+                search_engine=fts_engine, query="black hare"
+            ),
+            semantic_black_hare=generate_search_result_fixture(
+                search_engine=ss_engine, query="black hare"
+            ),
+            fulltext_education=generate_search_result_fixture(
+                search_engine=fts_engine, query="education"
+            ),
+            semantic_education=generate_search_result_fixture(
+                search_engine=ss_engine, query="education"
+            ),
+            fulltext_nature_preservation=generate_search_result_fixture(
+                search_engine=fts_engine, query="nature preservation"
+            ),
+            semantic_nature_preservation=generate_search_result_fixture(
+                search_engine=ss_engine, query="nature preservation"
+            ),
+            fulltext_blck_hare=generate_search_result_fixture(
+                search_engine=fts_engine, query="blck hare"
+            ),
+            semantic_blck_hare=generate_search_result_fixture(
+                search_engine=ss_engine, query="blck hare"
+            ),
+        )

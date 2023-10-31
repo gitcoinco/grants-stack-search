@@ -1,7 +1,7 @@
 import pytest
 from typing import List
 from src.data import InputProjectDocument
-from src.search import SearchResult
+from src.search import SearchResult, SearchResultMeta
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 from src.search_hybrid import combine_results
@@ -19,7 +19,8 @@ def test_fulltext_search(project_docs: List[InputProjectDocument]):
         results[0].project_id
         == "0xf944d9fca398a4cb7f4d9b237049ad807d20f9151c254a6ad098672c13bce124"
     )
-    assert results[0].score == 26.793
+    assert results[0].search_meta.score == 33.607
+    assert results[0].search_meta.type == "fulltext"
 
 
 @pytest.mark.skip(
@@ -32,9 +33,10 @@ def test_semantic_search(project_docs: List[InputProjectDocument]):
     results = ss_engine.search("open source")
 
     assert len(results) == 10
-    assert results[0].name == "CryptoStats"
-    assert results[1].name == "Simple Map"
-    assert results[0].score == 1.309523582458496
+    assert results[0].name == "Open Source AI Podcast"
+    assert results[0].search_meta.score == 0.5276312828063965
+    assert results[0].search_meta.type == "semantic"
+    assert results[1].name == "The Follow Black Hare"
 
 
 def test_hybrid_search_with_strongly_relevant_keywords(result_sets: ResultSets):
@@ -42,8 +44,8 @@ def test_hybrid_search_with_strongly_relevant_keywords(result_sets: ResultSets):
         semantic_results=result_sets.semantic_black_hare,
         fulltext_results=result_sets.fulltext_black_hare,
     )
-    assert len(results) == 1
     assert results[0].name == "The Follow Black Hare"
+    assert len(results) == 1
 
 
 def test_hybrid_search_with_typo(result_sets: ResultSets):
@@ -78,7 +80,7 @@ def test_search_result_computed_properties():
         description_markdown="# Header\n\nText",
         website_url="https://example.com",
         banner_image_cid="abc123",
-        score=1.5,
+        search_meta=SearchResultMeta(score=1.5, type="fulltext"),
     )
 
     assert result.banner_image_url == "https://ipfs.io/ipfs/abc123"

@@ -1,5 +1,5 @@
 from mdx_linkify import mdx_linkify
-from typing import ClassVar, List, Any, Self
+from typing import ClassVar, List, Any, Literal, Self, Union
 from pydantic import BaseModel, computed_field
 from abc import ABC, abstractmethod
 from src.data import InputProjectDocument
@@ -10,20 +10,28 @@ from urllib.parse import urljoin
 markdown_linkify_extension = mdx_linkify.LinkifyExtension()
 
 
-# TODO defining this after `SearchEngine` causes "variable not defined" type warning in the definition of `search`. can it be avoided?
+class SearchResultMeta(BaseModel):
+    type: Union[Literal["fulltext"], Literal["semantic"]]
+    score: float
+
+
 class SearchResult(BaseModel):
     project_id: str
     name: str
     description_markdown: str
     website_url: str
     banner_image_cid: str | None
-    score: float
+    search_meta: SearchResultMeta
 
     IPFS_GATEWAY_BASE: ClassVar[str] = "https://ipfs.io"
 
     @classmethod
     def from_content_and_metadata(
-        cls, content: Any, metadata: Any, score: float
+        cls,
+        content: Any,
+        metadata: Any,
+        search_score: float,
+        search_type: Union[Literal["fulltext"], Literal["semantic"]],
     ) -> Self:
         return cls(
             project_id=metadata.get("project_id"),
@@ -31,16 +39,21 @@ class SearchResult(BaseModel):
             description_markdown=content,
             website_url=metadata.get("website_url"),
             banner_image_cid=metadata.get("banner_image_cid"),
-            score=score,
+            search_meta=SearchResultMeta(score=search_score, type=search_type),
         )
 
     @classmethod
     def from_input_document(
-        cls, input_document: InputProjectDocument, score: float
+        cls,
+        input_document: InputProjectDocument,
+        search_score: float,
+        search_type: Union[Literal["fulltext"], Literal["semantic"]],
     ) -> Self:
         metadata = input_document.document.metadata
         content = input_document.document.page_content
-        return cls.from_content_and_metadata(content, metadata, score)
+        return cls.from_content_and_metadata(
+            content, metadata, search_score=search_score, search_type=search_type
+        )
 
     @computed_field
     @property
