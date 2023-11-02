@@ -2,12 +2,9 @@ from dataclasses import dataclass
 import pickle
 import os
 from typing import List, Literal, Union
-from langchain.indexes.vectorstore import VectorStoreIndexWrapper
-from langchain.vectorstores import Chroma
-from langchain.chains.retrieval_qa.base import BaseRetrievalQA
 from src.data import (
-    InputProjectDocument,
-    load_projects_json,
+    InputDocument,
+    deprecated_load_input_documents_from_projects_json,
 )
 import pytest
 import logging
@@ -21,19 +18,20 @@ logging.basicConfig(level=logging.INFO)
 
 
 SEARCH_RESULTS_FIXTURES_DIR = "tests/fixtures/search_results"
-# TODO: change to reflect the fact that we now process applications files instead of projects file
-SAMPLE_PROJECTS_JSON_FILE = os.path.join(
+DEPRECATED_SAMPLE_PROJECTS_JSON_FILE = os.path.join(
     os.path.dirname(__file__), "fixtures/sample-projects.json"
 )
 
 
 @pytest.fixture(scope="session")
-def project_docs() -> List[InputProjectDocument]:
-    return load_projects_json(SAMPLE_PROJECTS_JSON_FILE)
+def input_documents() -> List[InputDocument]:
+    return deprecated_load_input_documents_from_projects_json(
+        DEPRECATED_SAMPLE_PROJECTS_JSON_FILE
+    )
 
 
 @dataclass
-class ResultSets:
+class FixtureResultSets:
     fulltext_black_hare: List[SearchResult]
     semantic_black_hare: List[SearchResult]
     fulltext_education: List[SearchResult]
@@ -45,7 +43,7 @@ class ResultSets:
 
 
 @pytest.fixture(scope="session")
-def result_sets() -> ResultSets:
+def result_sets() -> FixtureResultSets:
     def generate_search_result_fixture(
         search_engine: SearchEngine, query: str
     ) -> List[SearchResult]:
@@ -74,7 +72,7 @@ def result_sets() -> ResultSets:
             return pickle.load(file)
 
     if os.path.isdir(SEARCH_RESULTS_FIXTURES_DIR):
-        return ResultSets(
+        return FixtureResultSets(
             fulltext_black_hare=load_search_result_fixture(
                 search_type="fulltext", query="black hare"
             ),
@@ -101,13 +99,15 @@ def result_sets() -> ResultSets:
             ),
         )
     else:
-        project_docs = load_projects_json(SAMPLE_PROJECTS_JSON_FILE)
+        project_docs = deprecated_load_input_documents_from_projects_json(
+            DEPRECATED_SAMPLE_PROJECTS_JSON_FILE
+        )
         fts_engine = FullTextSearchEngine()
-        fts_engine.index_projects(project_docs)
+        fts_engine.index(project_docs)
         ss_engine = SemanticSearchEngine()
-        ss_engine.index_projects(project_docs)
+        ss_engine.index(project_docs)
 
-        return ResultSets(
+        return FixtureResultSets(
             fulltext_black_hare=generate_search_result_fixture(
                 search_engine=fts_engine, query="black hare"
             ),

@@ -2,12 +2,12 @@ import time
 import logging
 from lunr import lunr
 from typing import List
-from src.data import InputProjectDocument
+from src.data import InputDocument
 from src.search import SearchEngine, SearchResult
 
 
 class FullTextSearchEngine(SearchEngine):
-    def index_projects(self, project_docs: List[InputProjectDocument]) -> None:
+    def index(self, project_docs: List[InputDocument]) -> None:
         start_time = time.perf_counter()
         self.document_index = {
             d.document.metadata["project_id"]: d for d in project_docs

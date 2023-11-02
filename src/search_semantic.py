@@ -3,7 +3,7 @@ import logging
 from langchain.vectorstores import Chroma
 from typing import List
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from src.data import InputProjectDocument
+from src.data import InputDocument
 from src.search import SearchEngine, SearchResult
 
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -34,9 +34,9 @@ class SemanticSearchEngine(SearchEngine):
             logging.debug("chromadb loaded from %s", persist_directory)
             self.db = persisted_db
 
-    def index_projects(
+    def index(
         self,
-        project_docs: List[InputProjectDocument],
+        project_docs: List[InputDocument],
         persist_directory: str | None = None,
     ) -> None:
         start_time = time.perf_counter()
@@ -46,7 +46,7 @@ class SemanticSearchEngine(SearchEngine):
         self.db = Chroma.from_documents(
             documents=raw_documents,
             embedding=embedding_function,
-            ids=[doc.metadata["project_id"] for doc in raw_documents],
+            ids=[doc.metadata["application_ref"] for doc in raw_documents],
             persist_directory=persist_directory,
             # Prevents negative scores and consequent UserWarning. See https://github.com/langchain-ai/langchain/issues/10864
             collection_metadata={"hnsw:space": "cosine"},
@@ -63,7 +63,7 @@ class SemanticSearchEngine(SearchEngine):
     def search(self, query_string: str) -> List[SearchResult]:
         return [
             SearchResult.from_input_document(
-                input_document=InputProjectDocument(raw_doc),
+                input_document=InputDocument(raw_doc),
                 search_score=score,
                 search_type="semantic",
             )

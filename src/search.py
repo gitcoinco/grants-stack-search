@@ -2,7 +2,7 @@ from mdx_linkify import mdx_linkify
 from typing import ClassVar, List, Any, Literal, Self, Union
 from pydantic import BaseModel, computed_field
 from abc import ABC, abstractmethod
-from src.data import InputProjectDocument
+from src.data import InputDocument
 from strip_markdown import strip_markdown
 from markdown import markdown
 from urllib.parse import urljoin
@@ -16,6 +16,13 @@ class SearchResultMeta(BaseModel):
 
 
 class SearchResult(BaseModel):
+    # TODO alias to camelCase, e.g.
+    # foo_bar: str = Field(alias='fooBar')
+
+    application_ref: str
+    chain_id: int
+    round_application_id: str
+    round_id: str
     project_id: str
     name: str
     description_markdown: str
@@ -34,6 +41,10 @@ class SearchResult(BaseModel):
         search_type: Union[Literal["fulltext"], Literal["semantic"]],
     ) -> Self:
         return cls(
+            application_ref=metadata.get("application_ref"),
+            round_id=metadata.get("round_id"),
+            round_application_id=metadata.get("round_application_id"),
+            chain_id=metadata.get("chain_id"),
             project_id=metadata.get("project_id"),
             name=metadata.get("name"),
             description_markdown=content,
@@ -45,7 +56,7 @@ class SearchResult(BaseModel):
     @classmethod
     def from_input_document(
         cls,
-        input_document: InputProjectDocument,
+        input_document: InputDocument,
         search_score: float,
         search_type: Union[Literal["fulltext"], Literal["semantic"]],
     ) -> Self:
@@ -80,7 +91,7 @@ class SearchResult(BaseModel):
 
 class SearchEngine(ABC):
     @abstractmethod
-    def index_projects(self, project_docs: List[InputProjectDocument]) -> None:
+    def index(self, project_docs: List[InputDocument]) -> None:
         pass
 
     @abstractmethod

@@ -1,145 +1,36 @@
 import pytest
-import pathlib
-import json
-from src.data import load_projects_json, load_applications_dir
-from pprint import pprint
-
-
-def test_load_valid_document(tmp_path: pathlib.Path):
-    projects_json = tmp_path / "projects.json"
-    projects_json.write_text(
-        json.dumps(
-            [
-                {
-                    "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
-                    "metadata": {
-                        "title": "Foo",
-                        "description": "A foo project",
-                        "website": "https://example.com/foo",
-                        "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
-                    },
-                }
-            ]
-        )
-    )
-
-    documents = load_projects_json(str(projects_json))
-    assert len(documents) == 1
-
-
-def test_ignore_document_without_project_id(tmp_path: pathlib.Path):
-    projects_json = tmp_path / "projects.json"
-    projects_json.write_text(
-        json.dumps(
-            [
-                {
-                    "metadata": {
-                        "title": "Foo",
-                        "description": "A foo project",
-                        "website": "https://example.com/foo",
-                        "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
-                    },
-                }
-            ]
-        )
-    )
-
-    documents = load_projects_json(str(projects_json))
-    assert len(documents) == 0
-
-
-def test_ignore_document_without_title(tmp_path: pathlib.Path):
-    projects_json = tmp_path / "projects.json"
-    projects_json.write_text(
-        json.dumps(
-            [
-                {
-                    "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
-                    "metadata": {
-                        "description": "A foo project",
-                        "website": "https://example.com/foo",
-                        "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
-                    },
-                }
-            ]
-        )
-    )
-
-    documents = load_projects_json(str(projects_json))
-    assert len(documents) == 0
-
-
-@pytest.mark.skip(reason="we probably don't want this")
-def test_ignore_document_without_description(tmp_path: pathlib.Path):
-    projects_json = tmp_path / "projects.json"
-    projects_json.write_text(
-        json.dumps(
-            [
-                {
-                    "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
-                    "metadata": {
-                        "title": "Foo",
-                        "website": "https://example.com/foo",
-                        "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
-                    },
-                }
-            ]
-        )
-    )
-
-    documents = load_projects_json(str(projects_json))
-    assert len(documents) == 0
-
-
-def test_ignore_document_without_website(tmp_path: pathlib.Path):
-    projects_json = tmp_path / "projects.json"
-    projects_json.write_text(
-        json.dumps(
-            [
-                {
-                    "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
-                    "metadata": {
-                        "title": "Foo",
-                        "description": "A foo project",
-                        "bannerImg": "00000000000000000000000000000000000000000000000000000000foo",
-                    },
-                }
-            ]
-        )
-    )
-
-    documents = load_projects_json(str(projects_json))
-    assert len(documents) == 0
-
-
-def test_accept_document_without_banner(tmp_path: pathlib.Path):
-    projects_json = tmp_path / "projects.json"
-    projects_json.write_text(
-        json.dumps(
-            [
-                {
-                    "id": "0x0000000000000000000000000000000000000000000000000000000000000001",
-                    "metadata": {
-                        "title": "Foo",
-                        "description": "A foo project",
-                        "website": "https://example.com/foo",
-                    },
-                }
-            ]
-        )
-    )
-
-    documents = load_projects_json(str(projects_json))
-    assert len(documents) == 1
+from src.data import load_input_documents_from_applications_dir
 
 
 def test_load_applications_dir():
-    input_documents = load_applications_dir(
-        "tests/fixtures/sample_applications_by_round"
-    )
-    assert len(input_documents) == 62
-
-    input_documents = load_applications_dir(
-        "tests/fixtures/sample_applications_by_round", filter_duplicate_projects=False
+    input_documents = load_input_documents_from_applications_dir(
+        "tests/fixtures/sample_applications_by_round", chain_id=10
     )
     assert len(input_documents) == 64
+    assert (
+        input_documents[0].document.metadata.get("application_ref")
+        == "10:0x10be322DE44389DeD49c0b2b73d8c3A1E3B6D871:0"
+    )
+    assert (
+        input_documents[0].document.metadata.get("project_id")
+        == "0x0737158421936b084c9d466fa2e6577101528bd53d07494e44bb4dbe34179ab5"
+    )
+    assert input_documents[0].document.metadata.get("chain_id") == 10
+    assert (
+        input_documents[0].document.metadata.get("round_id")
+        == "0x10be322DE44389DeD49c0b2b73d8c3A1E3B6D871"
+    )
+    assert input_documents[0].document.metadata.get("round_application_id") == "0"
+    assert (
+        input_documents[0].document.metadata.get("name")
+        == "DeSpace QF: Public Goods Funding in Space"
+    )
+    assert (
+        input_documents[0].document.metadata.get("banner_image_cid")
+        == "bafkreiggke2jjh7a6p7zn3kc6soxhwqd3azl6f3ygbpewvszuauzyfum4q"
+    )
+    assert input_documents[0].document.metadata.get("logo_image_cid") == None
+    assert (
+        input_documents[0].document.metadata.get("website_url")
+        == "https://www.despace-qf.com"
+    )

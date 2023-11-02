@@ -1,12 +1,11 @@
 import logging
-from pprint import pprint
-from typing import Any
+from typing import Any, Dict
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from src.config import Settings
-from src.data import load_projects_json, load_applications_dir
+from src.data import InputDocument, load_input_documents_from_applications_dir
 from src.search import SearchResult
 from src.search_fulltext import FullTextSearchEngine
 from src.search_hybrid import combine_results
@@ -28,21 +27,31 @@ SearchResult.IPFS_GATEWAY_BASE = settings.ipfs_gateway
 ######################################################################
 # STATE
 
-project_docs = load_applications_dir(settings.applications_dir)
+input_documents = load_input_documents_from_applications_dir(
+    settings.applications_dir, chain_id=settings.chain_id
+)
+
+# TODO create a Dataset class
+input_documents_index: Dict[str, InputDocument] = {}
+for input_document in input_documents:
+    input_documents_index[
+        input_document.document.metadata["application_ref"]
+    ] = input_document
+
 
 semantic_search_engine = SemanticSearchEngine()
 if settings.chromadb_persistence_dir is None:
-    semantic_search_engine.index_projects(project_docs)
+    semantic_search_engine.index(input_documents)
 else:
     try:
         semantic_search_engine.load(settings.chromadb_persistence_dir)
     except Exception as e:
-        semantic_search_engine.index_projects(
-            project_docs, persist_directory=settings.chromadb_persistence_dir
+        semantic_search_engine.index(
+            input_documents, persist_directory=settings.chromadb_persistence_dir
         )
 
 fulltext_search_engine = FullTextSearchEngine()
-fulltext_search_engine.index_projects(project_docs)
+fulltext_search_engine.index(input_documents)
 
 
 app = FastAPI()
@@ -51,14 +60,17 @@ app = FastAPI()
 # UTILITIES
 
 
-def get_project_by_id(project_id: str) -> SearchResult | None:
-    db = semantic_search_engine._hack_get_db()
-    result = db.get(project_id)
-    if len(result["ids"]) == 0:
+def get_application_by_ref(application_ref: str) -> SearchResult | None:
+    input_document = input_documents_index.get(application_ref)
+    if input_document is None:
         return None
     else:
+        # TODO return an Application object without search metadata
         return SearchResult.from_content_and_metadata(
-            content=result["documents"][0], metadata=result["metadatas"][0], score=1
+            content=input_document.document.page_content,
+            metadata=input_document.document.metadata,
+            search_score=0,
+            search_type="fulltext",
         )
 
 
@@ -109,9 +121,9 @@ def search(q: str) -> SearchResponse:
     )
 
 
-@app.get("/projects/{project_id}")
-def get_project(project_id: str) -> SearchResult | None:
-    return get_project_by_id(project_id)
+@app.get("/applications/{application_ref}")
+def get_application(application_ref: str) -> SearchResult | None:
+    return get_application_by_ref(application_ref)
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

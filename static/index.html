@@ -12,7 +12,7 @@
       rel="stylesheet"
       href="https://unpkg.com/@picocss/pico@1.5.7/css/pico.min.css"
     />
-    <title>Projects</title>
+    <title>Github Application Search</title>
     <script src="https://unpkg.com/nunjucks@3.1.7/browser/nunjucks.min.js"></script>
     <script src="https://unpkg.com/htmx.org"></script>
     <script src="https://unpkg.com/htmx.org/dist/ext/client-side-templates.js"></script>
@@ -38,7 +38,7 @@
         grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
       }
 
-      article.project-summary {
+      article.application-summary {
         height: 20rem;
         overflow: hidden;
         font-size: 12px;
@@ -46,12 +46,12 @@
         margin-top: calc(var(--block-spacing-vertical) * 0.125);
       }
 
-      article.project-summary > header {
+      article.application-summary > header {
         background-size: cover;
         height: calc(var(--block-spacing-vertical) * 2);
       }
 
-      article.project-summary .fade-out {
+      article.application-summary .fade-out {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -62,16 +62,16 @@
         background-image: linear-gradient(to bottom, transparent, #fff);
       }
 
-      article.project > header {
+      article.application > header {
         background-size: cover;
         height: calc(var(--block-spacing-vertical) * 8);
       }
 
-      section.similar-projects {
+      section.similar-applications {
         margin-top: calc(var(--block-spacing-vertical) * 2);
       }
 
-      section.similar-projects > h3 {
+      section.similar-applications > h3 {
         text-align: center;
       }
 
@@ -102,16 +102,16 @@
           placeholder="Search..."
           autocomplete="off"
           hx-get="/search"
-          hx-target="#projects"
-          hx-target-400="#projects"
-          nunjucks-template="project-list-tmpl"
+          hx-target="#applications"
+          hx-target-400="#applications"
+          nunjucks-template="application-list-tmpl"
         />
 
         <details
           class="examples"
-          hx-target="#projects"
-          hx-target-400="#projects"
-          nunjucks-template="project-list-tmpl"
+          hx-target="#applications"
+          hx-target-400="#applications"
+          nunjucks-template="application-list-tmpl"
         >
           <summary>Examples</summary>
 
@@ -203,9 +203,9 @@
         </details>
       </section>
 
-      <section id="projects"></section>
+      <section id="applications"></section>
 
-      <template id="project-list-tmpl">
+      <template id="application-list-tmpl">
         {% if detail is string %}
         <article>
           <pre><code>{{ detail }}</code></pre>
@@ -215,16 +215,16 @@
         <div class="responsive-grid">
           {% for p in results %}
 
-          <article class="project-summary">
+          <article class="application-summary">
             <header
               style="background-image: url({{ p.banner_image_url }})"
             ></header>
             <h5>
               <a
-                href="#project"
-                hx-get="/projects/{{ p.project_id }}"
-                hx-target="#project"
-                nunjucks-template="project-tmpl"
+                href="#application"
+                hx-get="/applications/{{ p.application_id }}"
+                hx-target="#application"
+                nunjucks-template="application-tmpl"
               >
                 {{ p.name }}
               </a>
@@ -251,11 +251,11 @@
 
         {% endif %}
 
-        <div id="project"></div>
+        <div id="application"></div>
       </template>
 
-      <template id="project-tmpl">
-        <article class="project">
+      <template id="application-tmpl">
+        <article class="application">
           <header
             style="background-image: url({{ banner_image_url }});"
           ></header>
@@ -265,12 +265,12 @@
           <div>{{ description_html | safe }}</div>
         </article>
 
-        <section class="similar-projects">
-          <h3>Explore similar projects:</h3>
+        <section class="similar-applications">
+          <h3>Explore similar applications:</h3>
           <div
             hx-trigger="load"
             hx-get="/semantic-search?q={{ description_plain }}"
-            nunjucks-template="project-list-tmpl"
+            nunjucks-template="application-list-tmpl"
           ></div>
         </section>
       </template>
