@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, List
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
@@ -119,6 +119,19 @@ def search(q: str) -> SearchResponse:
             ],
         },
     )
+
+
+@app.get("/applications")
+def get_applications() -> List[SearchResult]:
+    return [
+        SearchResult.from_content_and_metadata(
+            content=input_document.document.page_content,
+            metadata=input_document.document.metadata,
+            search_score=0,
+            search_type="fulltext",
+        )
+        for input_document in input_documents
+    ]
 
 
 @app.get("/applications/{application_ref}")
