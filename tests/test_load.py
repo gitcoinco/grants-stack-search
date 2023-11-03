@@ -30,7 +30,10 @@ def test_load_applications_dir():
         input_documents[0].document.metadata.get("banner_image_cid")
         == "bafkreiggke2jjh7a6p7zn3kc6soxhwqd3azl6f3ygbpewvszuauzyfum4q"
     )
-    assert input_documents[0].document.metadata.get("logo_image_cid") == None
+    assert (
+        input_documents[0].document.metadata.get("logo_image_cid")
+        == "bafkreidk4owifjkaeg5tgeswfinqx55pymlwyoc25z4d53kyz74wpqm2mm"
+    )
     assert (
         input_documents[0].document.metadata.get("website_url")
         == "https://www.despace-qf.com"

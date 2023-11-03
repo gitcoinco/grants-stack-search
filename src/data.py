@@ -42,6 +42,9 @@ def load_input_documents_from_applications_dir(
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
             metadata["banner_image_cid"] = banner_image_cid
+        logo_image_cid = record.get("logo_image_cid")
+        if logo_image_cid is not None:
+            metadata["logo_image_cid"] = logo_image_cid
         return metadata
 
     loader = DirectoryLoader(
@@ -50,7 +53,7 @@ def load_input_documents_from_applications_dir(
         show_progress=True,
         loader_cls=JSONLoader,  # type: ignore -- typings seem to require an UnstructuredLoader
         loader_kwargs={
-            "jq_schema": ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg }",
+            "jq_schema": ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }",
             "content_key": "description",
             "metadata_func": get_json_document_metadata,
             "text_content": False,
@@ -98,12 +101,15 @@ def deprecated_load_input_documents_from_projects_json(
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
             metadata["banner_image_cid"] = banner_image_cid
+        logo_image_cid = record.get("logo_image_cid")
+        if logo_image_cid is not None:
+            metadata["logo_image_cid"] = logo_image_cid
         fake_application_counter = fake_application_counter + 1
         return metadata
 
     loader = JSONLoader(
         file_path=projects_json_path,
-        jq_schema=".[] | { id, name: .metadata.title, website_url: .metadata.website, description: .metadata.description, banner_image_cid: .metadata.bannerImg }",
+        jq_schema=".[] | { id, name: .metadata.title, website_url: .metadata.website, description: .metadata.description, banner_image_cid: .metadata.bannerImg, logo_image_cid: .metadata.logoImg }",
         content_key="description",
         metadata_func=get_json_document_metadata,
         text_content=False,

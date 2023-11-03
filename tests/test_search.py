@@ -104,6 +104,7 @@ def test_search_result_computed_properties():
             name="Example",
             website_url="https://example.com",
             banner_image_cid="abc123",
+            logo_image_cid="def456",
             summary_text="example",
         ),
         meta=SearchResultMeta(search_score=1.5, search_type="fulltext"),

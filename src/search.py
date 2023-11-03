@@ -22,9 +22,11 @@ class ApplicationSummary(BaseModel):
     project_id: str = Field(serialization_alias="projectId")
     name: str = Field(serialization_alias="name")
     website_url: str = Field(serialization_alias="websiteUrl")
+    logo_image_cid: str | None = Field(serialization_alias="logoImageCid")
     banner_image_cid: str | None = Field(serialization_alias="bannerImageCid")
     summary_text: str = Field(serialization_alias="summaryText")
 
+    # TODO: provide camelCase version
     @computed_field
     @property
     def banner_image_url(self) -> str | None:
@@ -33,6 +35,16 @@ class ApplicationSummary(BaseModel):
         else:
             return urljoin(
                 ApplicationSummary.IPFS_GATEWAY_BASE, "ipfs/" + self.banner_image_cid
+            )
+
+    @computed_field
+    @property
+    def logo_image_url(self) -> str | None:
+        if self.logo_image_cid is None:
+            return None
+        else:
+            return urljoin(
+                ApplicationSummary.IPFS_GATEWAY_BASE, "ipfs/" + self.logo_image_cid
             )
 
     @classmethod
@@ -45,6 +57,7 @@ class ApplicationSummary(BaseModel):
             project_id=metadata.get("project_id"),
             name=metadata.get("name"),
             website_url=metadata.get("website_url"),
+            logo_image_cid=metadata.get("logo_image_cid"),
             banner_image_cid=metadata.get("banner_image_cid"),
             summary_text=metadata.get("summary_text"),
         )
