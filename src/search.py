@@ -13,6 +13,8 @@ class SearchResultMeta(BaseModel):
 
 
 class ApplicationSummary(BaseModel):
+    IPFS_GATEWAY_BASE: ClassVar[str] = "https://ipfs.io"
+
     application_ref: str = Field(serialization_alias="applicationRef")
     chain_id: int = Field(serialization_alias="chainId")
     round_application_id: str = Field(serialization_alias="roundApplicationId")
@@ -30,7 +32,7 @@ class ApplicationSummary(BaseModel):
             return None
         else:
             return urljoin(
-                SearchResult.IPFS_GATEWAY_BASE, "ipfs/" + self.banner_image_cid
+                ApplicationSummary.IPFS_GATEWAY_BASE, "ipfs/" + self.banner_image_cid
             )
 
     @classmethod
@@ -51,8 +53,6 @@ class ApplicationSummary(BaseModel):
 class SearchResult(BaseModel):
     meta: SearchResultMeta
     data: ApplicationSummary
-
-    IPFS_GATEWAY_BASE: ClassVar[str] = "https://ipfs.io"
 
     @classmethod
     def from_content_and_metadata(

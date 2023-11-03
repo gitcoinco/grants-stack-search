@@ -19,7 +19,7 @@ from src.search_semantic import SemanticSearchEngine
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 load_dotenv()
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
-SearchResult.IPFS_GATEWAY_BASE = settings.ipfs_gateway
+ApplicationSummary.IPFS_GATEWAY_BASE = settings.ipfs_gateway
 
 
 ######################################################################
