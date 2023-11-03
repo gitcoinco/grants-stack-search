@@ -16,7 +16,7 @@ from src.search_semantic import SemanticSearchEngine
 ######################################################################
 # SETUP
 
-MAX_RESULTS_PER_STRATEGY = 8
+MAX_RESULTS_PER_STRATEGY = 25
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 load_dotenv()
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
