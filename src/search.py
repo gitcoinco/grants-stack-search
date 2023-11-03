@@ -1,27 +1,27 @@
 from typing import ClassVar, List, Any, Literal, Self, Union
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, Field, computed_field
 from abc import ABC, abstractmethod
 from src.data import InputDocument
 from urllib.parse import urljoin
 
 
 class SearchResultMeta(BaseModel):
-    search_type: Union[Literal["fulltext"], Literal["semantic"]]
-    search_score: float
+    search_type: Union[Literal["fulltext"], Literal["semantic"]] = Field(
+        serialization_alias="searchType"
+    )
+    search_score: float = Field(serialization_alias="searchScore")
 
 
 class ApplicationSummary(BaseModel):
-    # TODO alias to camelCase, e.g.
-    # foo_bar: str = Field(alias='fooBar')
-    application_ref: str
-    chain_id: int
-    round_application_id: str
-    round_id: str
-    project_id: str
-    name: str
-    website_url: str
-    banner_image_cid: str | None
-    summary_text: str
+    application_ref: str = Field(serialization_alias="applicationRef")
+    chain_id: int = Field(serialization_alias="chainId")
+    round_application_id: str = Field(serialization_alias="roundApplicationId")
+    round_id: str = Field(serialization_alias="roundId")
+    project_id: str = Field(serialization_alias="projectId")
+    name: str = Field(serialization_alias="name")
+    website_url: str = Field(serialization_alias="websiteUrl")
+    banner_image_cid: str | None = Field(serialization_alias="bannerImageCid")
+    summary_text: str = Field(serialization_alias="summaryText")
 
     @computed_field
     @property

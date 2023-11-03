@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, List
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
@@ -59,15 +59,19 @@ app = FastAPI()
 
 
 class SearchResponse(BaseModel):
-    results: List[SearchResult]
+    results: List[SearchResult] = Field(serialization_alias="results")
 
 
 class ApplicationsResponse(BaseModel):
-    application_summaries: List[ApplicationSummary]
+    application_summaries: List[ApplicationSummary] = Field(
+        serialization_alias="applicationSummaries"
+    )
 
 
 class ApplicationResponse(BaseModel):
-    application_summary: ApplicationSummary
+    application_summary: ApplicationSummary = Field(
+        serialization_alias="applicationSummary"
+    )
 
 
 ######################################################################
