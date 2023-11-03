@@ -16,7 +16,6 @@ from src.search_semantic import SemanticSearchEngine
 ######################################################################
 # SETUP
 
-MAX_RESULTS_PER_STRATEGY = 25
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 load_dotenv()
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
@@ -104,7 +103,7 @@ def search(q: str) -> SearchResponse:
         raise Exception('Unknown strategy: "%s"' % query.params.strategy)
 
     return SearchResponse(
-        results=results[0:MAX_RESULTS_PER_STRATEGY],
+        results=results[0 : settings.max_results_per_search_strategy],
     )
 
 
