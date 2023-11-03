@@ -7,14 +7,16 @@ from src.search import SearchEngine, SearchResult
 
 
 class FullTextSearchEngine(SearchEngine):
-    def index(self, project_docs: List[InputDocument]) -> None:
+    def index(self, input_documents: List[InputDocument]) -> None:
         start_time = time.perf_counter()
         self.document_index = {
-            d.document.metadata["project_id"]: d for d in project_docs
+            # TODO application_ref needs test
+            i.document.metadata["application_ref"]: i
+            for i in input_documents
         }
 
         self.search_index = lunr(
-            ref="project_id",
+            ref="application_ref",
             fields=[
                 dict(field_name="name", boost=10),
                 "description",
@@ -22,17 +24,17 @@ class FullTextSearchEngine(SearchEngine):
             ],
             documents=[
                 dict(
-                    project_id=p.document.metadata["project_id"],
-                    name=p.document.metadata["name"],
-                    description=p.document.page_content,
-                    website_url=p.document.metadata["website_url"],
+                    application_ref=i.document.metadata["application_ref"],
+                    name=i.document.metadata["name"],
+                    description=i.document.page_content,
+                    website_url=i.document.metadata["website_url"],
                 )
-                for p in project_docs
+                for i in input_documents
             ],
         )
         logging.debug(
             "indexed %d projects in %.2f seconds with lunr.py",
-            len(project_docs),
+            len(input_documents),
             time.perf_counter() - start_time,
         )
 

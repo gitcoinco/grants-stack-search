@@ -1,6 +1,9 @@
-from typing import List, Dict
+from typing import List
 from langchain.schema import Document
 from langchain.document_loaders import JSONLoader, DirectoryLoader
+from strip_markdown import strip_markdown
+
+MAX_SUMMARY_TEXT_LENGTH = 300
 
 
 class InvalidInputDocumentException(Exception):
@@ -27,7 +30,56 @@ class InputDocument:
             )
 
 
-# Uses a projects.json to generate input documents from. Fills in missing
+def load_input_documents_from_applications_dir(
+    applications_dir_path: str, chain_id: int
+) -> List[InputDocument]:
+    def get_json_document_metadata(record: dict, metadata: dict) -> dict:
+        metadata["project_id"] = record.get("project_id")
+        metadata["name"] = record.get("name")
+        metadata["website_url"] = record.get("website_url")
+        metadata["round_id"] = record.get("round_id")
+        metadata["round_application_id"] = record.get("round_application_id")
+        banner_image_cid = record.get("banner_image_cid")
+        if banner_image_cid is not None:
+            metadata["banner_image_cid"] = banner_image_cid
+        return metadata
+
+    loader = DirectoryLoader(
+        applications_dir_path,
+        glob="*.json",
+        show_progress=True,
+        loader_cls=JSONLoader,  # type: ignore -- typings seem to require an UnstructuredLoader
+        loader_kwargs={
+            "jq_schema": ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg }",
+            "content_key": "description",
+            "metadata_func": get_json_document_metadata,
+            "text_content": False,
+        },
+    )
+
+    documents: List[InputDocument] = []
+    for raw_document in loader.load():
+        try:
+            round_id = raw_document.metadata["round_id"]
+            round_application_id = raw_document.metadata["round_application_id"]
+            description_plain = strip_markdown(raw_document.page_content)
+            summary_text = description_plain[:MAX_SUMMARY_TEXT_LENGTH]
+            if len(description_plain) > MAX_SUMMARY_TEXT_LENGTH:
+                summary_text = summary_text + "..."
+            raw_document.metadata[
+                "application_ref"
+            ] = f"{chain_id}:{round_id}:{round_application_id}"
+            raw_document.metadata["chain_id"] = chain_id
+            raw_document.metadata["round_application_id"] = round_application_id
+            raw_document.metadata["summary_text"] = summary_text
+            documents.append(InputDocument(raw_document))
+        except InvalidInputDocumentException:
+            pass
+
+    return documents
+
+
+# Use a projects.json to generate input documents from. Fills in missing
 # fields with dummy values. Legacy.
 def deprecated_load_input_documents_from_projects_json(
     projects_json_path: str,
@@ -60,57 +112,13 @@ def deprecated_load_input_documents_from_projects_json(
     input_documents: List[InputDocument] = []
     for raw_document in loader.load():
         try:
+            description_plain = strip_markdown(raw_document.page_content)
+            summary_text = description_plain[:MAX_SUMMARY_TEXT_LENGTH]
+            if len(description_plain) > MAX_SUMMARY_TEXT_LENGTH:
+                summary_text = summary_text + "..."
+            raw_document.metadata["summary_text"] = summary_text
             input_documents.append(InputDocument(raw_document))
         except InvalidInputDocumentException:
             pass
 
     return input_documents
-
-
-def load_input_documents_from_data(_data: List[Dict]) -> List[InputDocument]:
-    raise Exception("Not implemented")
-
-
-def load_input_documents_from_applications_dir(
-    applications_dir_path: str, chain_id: int
-) -> List[InputDocument]:
-    loader = DirectoryLoader(
-        applications_dir_path,
-        glob="*.json",
-        show_progress=True,
-        loader_cls=JSONLoader,  # type: ignore -- typings seem to require an UnstructuredLoader
-        loader_kwargs={
-            "jq_schema": ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg }",
-            "content_key": "description",
-            "metadata_func": get_json_document_metadata,
-            "text_content": False,
-        },
-    )
-
-    documents: List[InputDocument] = []
-    for generic_document in loader.load():
-        try:
-            round_id = generic_document.metadata["round_id"]
-            round_application_id = generic_document.metadata["round_application_id"]
-            generic_document.metadata[
-                "application_ref"
-            ] = f"{chain_id}:{round_id}:{round_application_id}"
-            generic_document.metadata["chain_id"] = chain_id
-            generic_document.metadata["round_application_id"] = round_application_id
-            documents.append(InputDocument(generic_document))
-        except InvalidInputDocumentException:
-            pass
-
-    return documents
-
-
-def get_json_document_metadata(record: dict, metadata: dict) -> dict:
-    metadata["project_id"] = record.get("project_id")
-    metadata["name"] = record.get("name")
-    metadata["website_url"] = record.get("website_url")
-    metadata["round_id"] = record.get("round_id")
-    metadata["round_application_id"] = record.get("round_application_id")
-    banner_image_cid = record.get("banner_image_cid")
-    if banner_image_cid is not None:
-        metadata["banner_image_cid"] = banner_image_cid
-    return metadata

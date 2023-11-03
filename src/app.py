@@ -1,12 +1,12 @@
 import logging
-from typing import Any, Dict, List
+from typing import Dict, List
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
 from dotenv import load_dotenv
 from src.config import Settings
-from src.data import InputDocument, load_input_documents_from_applications_dir
-from src.search import SearchResult
+from src.data import load_input_documents_from_applications_dir
+from src.search import ApplicationSummary, SearchResult
 from src.search_fulltext import FullTextSearchEngine
 from src.search_hybrid import combine_results
 from src.search_query import SearchQuery
@@ -19,8 +19,7 @@ from src.search_semantic import SemanticSearchEngine
 MAX_RESULTS_PER_STRATEGY = 8
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 load_dotenv()
-# how to make `type: ignore` unnecessary here?
-settings = Settings()  # type: ignore
+settings = Settings()  # type: ignore -- TODO investigate why this is necessary
 SearchResult.IPFS_GATEWAY_BASE = settings.ipfs_gateway
 
 
@@ -31,12 +30,11 @@ input_documents = load_input_documents_from_applications_dir(
     settings.applications_dir, chain_id=settings.chain_id
 )
 
-# TODO create a Dataset class
-input_documents_index: Dict[str, InputDocument] = {}
+application_summaries_by_ref: Dict[str, ApplicationSummary] = {}
 for input_document in input_documents:
-    input_documents_index[
+    application_summaries_by_ref[
         input_document.document.metadata["application_ref"]
-    ] = input_document
+    ] = ApplicationSummary.from_metadata(input_document.document.metadata)
 
 
 semantic_search_engine = SemanticSearchEngine()
@@ -57,26 +55,19 @@ fulltext_search_engine.index(input_documents)
 app = FastAPI()
 
 ######################################################################
-# UTILITIES
-
-
-def get_application_by_ref(application_ref: str) -> SearchResult | None:
-    input_document = input_documents_index.get(application_ref)
-    if input_document is None:
-        return None
-    else:
-        # TODO return an Application object without search metadata
-        return SearchResult.from_content_and_metadata(
-            content=input_document.document.page_content,
-            metadata=input_document.document.metadata,
-            search_score=0,
-            search_type="fulltext",
-        )
+# API TYPES
 
 
 class SearchResponse(BaseModel):
-    results: list[SearchResult]
-    debug: Any
+    results: List[SearchResult]
+
+
+class ApplicationsResponse(BaseModel):
+    application_summaries: List[ApplicationSummary]
+
+
+class ApplicationResponse(BaseModel):
+    application_summary: ApplicationSummary
 
 
 ######################################################################
@@ -92,7 +83,7 @@ def search(q: str) -> SearchResponse:
         raise HTTPException(status_code=400, detail=str(e))
 
     if not query.is_valid:
-        return SearchResponse(results=[], debug={})
+        return SearchResponse(results=[])
 
     if query.params.strategy == "semantic":
         results = semantic_search_engine.search(query.string)
@@ -110,33 +101,23 @@ def search(q: str) -> SearchResponse:
 
     return SearchResponse(
         results=results[0:MAX_RESULTS_PER_STRATEGY],
-        debug={
-            "query_string": query.string,
-            "query_params": query.params.model_dump(),
-            "result_count": len(results),
-            "results_names_with_search_meta": [
-                {"name": r.name, "meta": r.search_meta} for r in results
-            ],
-        },
     )
 
 
 @app.get("/applications")
-def get_applications() -> List[SearchResult]:
-    return [
-        SearchResult.from_content_and_metadata(
-            content=input_document.document.page_content,
-            metadata=input_document.document.metadata,
-            search_score=0,
-            search_type="fulltext",
-        )
-        for input_document in input_documents
-    ]
+def get_applications() -> ApplicationsResponse:
+    return ApplicationsResponse(
+        application_summaries=list(application_summaries_by_ref.values())
+    )
 
 
 @app.get("/applications/{application_ref}")
-def get_application(application_ref: str) -> SearchResult | None:
-    return get_application_by_ref(application_ref)
+def get_application(application_ref: str) -> ApplicationResponse | None:
+    application_summary = application_summaries_by_ref.get(application_ref)
+    if application_summary is None:
+        return None
+    else:
+        return ApplicationResponse(application_summary=application_summary)
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -1,3 +1,4 @@
+from typing import cast
 import pytest
 from src.data import load_input_documents_from_applications_dir
 
@@ -34,3 +35,8 @@ def test_load_applications_dir():
         input_documents[0].document.metadata.get("website_url")
         == "https://www.despace-qf.com"
     )
+    summary_text = cast(str, input_documents[0].document.metadata.get("summary_text"))
+    assert summary_text.startswith(
+        "Project Title: DeSpace Quadratic Fund\nAbstract\nTo align the"
+    )
+    assert len(summary_text) == 303

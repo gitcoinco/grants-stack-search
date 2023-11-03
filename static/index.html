@@ -213,23 +213,21 @@
         {% elif results | length %}
 
         <div class="responsive-grid">
-          {% for p in results %}
+          {% for r in results %}
 
           <article class="application-summary">
             <header
-              style="background-image: url({{ p.banner_image_url }})"
+              style="background-image: url({{ r.data.banner_image_url }})"
             ></header>
             <h5>
               <a
-                href="#application"
-                hx-get="/applications/{{ p.application_id }}"
-                hx-target="#application"
-                nunjucks-template="application-tmpl"
+                href="https://explorer.gitcoin.co/#/round/{{ r.data.chain_id }}/{{ r.data.round_id }}/{{ r.data.round_id }}-{{ r.data.round_application_id }}"
+                target="_blank"
               >
-                {{ p.name }}
+                {{ r.data.name }}
               </a>
             </h5>
-            <div>{{ p.description_plain }}</div>
+            <div>{{ r.data.summary_text }}</div>
             <div class="fade-out"></div>
           </article>
 
@@ -238,10 +236,7 @@
 
         <details class="inspect">
           <summary>API response</summary>
-          <h5>Results</h5>
           <pre>{{ results | dump(2) }}</pre>
-          <h5>Debug</h5>
-          <pre>{{ debug | dump(2) }}</pre>
         </details>
 
         {% else %}
@@ -250,29 +245,6 @@
         <p>No results found. :(</p>
 
         {% endif %}
-
-        <div id="application"></div>
-      </template>
-
-      <template id="application-tmpl">
-        <article class="application">
-          <header
-            style="background-image: url({{ banner_image_url }});"
-          ></header>
-
-          <h2>{{ name }}</h2>
-
-          <div>{{ description_html | safe }}</div>
-        </article>
-
-        <section class="similar-applications">
-          <h3>Explore similar applications:</h3>
-          <div
-            hx-trigger="load"
-            hx-get="/semantic-search?q={{ description_plain }}"
-            nunjucks-template="application-list-tmpl"
-          ></div>
-        </section>
       </template>
     </main>
 

@@ -29,12 +29,12 @@ def combine_results(
 def get_upper_outliers(
     results: List[SearchResult], std_dev_factor=3
 ) -> List[SearchResult]:
-    scores = [r.search_meta.score for r in results]
+    scores = [r.meta.search_score for r in results]
     cutoff = np.mean(scores) + np.std(scores) * std_dev_factor
-    return [r for r in results if r.search_meta.score > cutoff]
+    return [r for r in results if r.meta.search_score > cutoff]
 
 
 def filter_out_low_semantic_score(
     semantic_results: List[SearchResult], cutoff: float
 ) -> List[SearchResult]:
-    return [r for r in semantic_results if r.search_meta.score > cutoff]
+    return [r for r in semantic_results if r.meta.search_score > cutoff]
