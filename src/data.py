@@ -1,9 +1,11 @@
-from typing import List
+from typing import List, cast, Dict, Any
 from langchain.schema import Document
 from langchain.document_loaders import JSONLoader, DirectoryLoader
 from strip_markdown import strip_markdown
 
 MAX_SUMMARY_TEXT_LENGTH = 300
+
+APPLICATIONS_JSON_JQ_SCHEMA = ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }"
 
 
 class InvalidInputDocumentException(Exception):
@@ -30,32 +32,40 @@ class InputDocument:
             )
 
 
+def load_input_documents_from_file(
+    applications_file_path: str, chain_id: int
+) -> List[InputDocument]:
+    loader = JSONLoader(
+        applications_file_path,
+        jq_schema=APPLICATIONS_JSON_JQ_SCHEMA,
+        content_key="description",
+        metadata_func=get_application_json_document_metadata,
+        text_content=False,
+    )
+
+    documents: List[InputDocument] = []
+    for raw_document in loader.load():
+        try:
+            enrich_raw_document_with_computed_metadata(raw_document, chain_id)
+            documents.append(InputDocument(raw_document))
+        except InvalidInputDocumentException:
+            pass
+
+    return documents
+
+
 def load_input_documents_from_applications_dir(
     applications_dir_path: str, chain_id: int
 ) -> List[InputDocument]:
-    def get_json_document_metadata(record: dict, metadata: dict) -> dict:
-        metadata["project_id"] = record.get("project_id")
-        metadata["name"] = record.get("name")
-        metadata["website_url"] = record.get("website_url")
-        metadata["round_id"] = record.get("round_id")
-        metadata["round_application_id"] = record.get("round_application_id")
-        banner_image_cid = record.get("banner_image_cid")
-        if banner_image_cid is not None:
-            metadata["banner_image_cid"] = banner_image_cid
-        logo_image_cid = record.get("logo_image_cid")
-        if logo_image_cid is not None:
-            metadata["logo_image_cid"] = logo_image_cid
-        return metadata
-
     loader = DirectoryLoader(
         applications_dir_path,
         glob="*.json",
         show_progress=True,
         loader_cls=JSONLoader,  # type: ignore -- typings seem to require an UnstructuredLoader
         loader_kwargs={
-            "jq_schema": ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }",
+            "jq_schema": APPLICATIONS_JSON_JQ_SCHEMA,
             "content_key": "description",
-            "metadata_func": get_json_document_metadata,
+            "metadata_func": get_application_json_document_metadata,
             "text_content": False,
         },
     )
@@ -63,23 +73,44 @@ def load_input_documents_from_applications_dir(
     documents: List[InputDocument] = []
     for raw_document in loader.load():
         try:
-            round_id = raw_document.metadata["round_id"]
-            round_application_id = raw_document.metadata["round_application_id"]
-            description_plain = strip_markdown(raw_document.page_content)
-            summary_text = description_plain[:MAX_SUMMARY_TEXT_LENGTH]
-            if len(description_plain) > MAX_SUMMARY_TEXT_LENGTH:
-                summary_text = summary_text + "..."
-            raw_document.metadata[
-                "application_ref"
-            ] = f"{chain_id}:{round_id}:{round_application_id}"
-            raw_document.metadata["chain_id"] = chain_id
-            raw_document.metadata["round_application_id"] = round_application_id
-            raw_document.metadata["summary_text"] = summary_text
+            enrich_raw_document_with_computed_metadata(raw_document, chain_id)
             documents.append(InputDocument(raw_document))
         except InvalidInputDocumentException:
             pass
 
     return documents
+
+
+def get_application_json_document_metadata(record: dict, metadata: dict) -> dict:
+    metadata["project_id"] = record.get("project_id")
+    metadata["name"] = record.get("name")
+    metadata["website_url"] = record.get("website_url")
+    metadata["round_id"] = record.get("round_id")
+    metadata["round_application_id"] = record.get("round_application_id")
+    banner_image_cid = record.get("banner_image_cid")
+    if banner_image_cid is not None:
+        metadata["banner_image_cid"] = banner_image_cid
+    logo_image_cid = record.get("logo_image_cid")
+    if logo_image_cid is not None:
+        metadata["logo_image_cid"] = logo_image_cid
+    return metadata
+
+
+def enrich_raw_document_with_computed_metadata(
+    document: Document, chain_id: int
+) -> None:
+    round_id = document.metadata["round_id"]
+    round_application_id = document.metadata["round_application_id"]
+    description_plain = strip_markdown(document.page_content)
+    summary_text = description_plain[:MAX_SUMMARY_TEXT_LENGTH]
+    if len(description_plain) > MAX_SUMMARY_TEXT_LENGTH:
+        summary_text = summary_text + "..."
+    document.metadata[
+        "application_ref"
+    ] = f"{chain_id}:{round_id}:{round_application_id}"
+    document.metadata["chain_id"] = chain_id
+    document.metadata["round_application_id"] = round_application_id
+    document.metadata["summary_text"] = summary_text
 
 
 # Use a projects.json to generate input documents from. Fills in missing
