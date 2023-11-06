@@ -38,9 +38,7 @@ RUN APPLICATIONS_DOWNLOADER_DOWNLOAD_DIR=$APPLICATIONS_DOWNLOADER_DOWNLOAD_DIR \
     .venv/bin/python src/scripts/applications_downloader.py
 
 ARG CHAIN_ID=10
-ARG IPFS_GATEWAY=https://d16c97c2np8a2o.cloudfront.net/
 
-ENV IPFS_GATEWAY=$IPFS_GATEWAY
 ENV CHAIN_ID=$CHAIN_ID
 ENV APPLICATIONS_DIR=/tmp/applications_by_round
 CMD ["/bin/bash", "-c", "uvicorn --host 0.0.0.0 --port $PORT src.app:app"]

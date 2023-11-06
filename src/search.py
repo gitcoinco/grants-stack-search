@@ -1,8 +1,7 @@
-from typing import ClassVar, List, Any, Literal, Self, Union
-from pydantic import BaseModel, Field, computed_field
+from typing import List, Any, Literal, Self, Union
+from pydantic import BaseModel, Field
 from abc import ABC, abstractmethod
 from src.data import InputDocument
-from urllib.parse import urljoin
 
 
 class SearchResultMeta(BaseModel):
@@ -13,8 +12,6 @@ class SearchResultMeta(BaseModel):
 
 
 class ApplicationSummary(BaseModel):
-    IPFS_GATEWAY_BASE: ClassVar[str] = "https://ipfs.io"
-
     application_ref: str = Field(serialization_alias="applicationRef")
     chain_id: int = Field(serialization_alias="chainId")
     round_application_id: str = Field(serialization_alias="roundApplicationId")
@@ -25,27 +22,6 @@ class ApplicationSummary(BaseModel):
     logo_image_cid: str | None = Field(serialization_alias="logoImageCid")
     banner_image_cid: str | None = Field(serialization_alias="bannerImageCid")
     summary_text: str = Field(serialization_alias="summaryText")
-
-    # TODO: provide camelCase version
-    @computed_field
-    @property
-    def banner_image_url(self) -> str | None:
-        if self.banner_image_cid is None:
-            return None
-        else:
-            return urljoin(
-                ApplicationSummary.IPFS_GATEWAY_BASE, "ipfs/" + self.banner_image_cid
-            )
-
-    @computed_field
-    @property
-    def logo_image_url(self) -> str | None:
-        if self.logo_image_cid is None:
-            return None
-        else:
-            return urljoin(
-                ApplicationSummary.IPFS_GATEWAY_BASE, "ipfs/" + self.logo_image_cid
-            )
 
     @classmethod
     def from_metadata(cls, metadata: Any) -> Self:

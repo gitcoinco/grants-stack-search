@@ -91,23 +91,3 @@ def test_hybrid_search_with_custom_semantic_score_cutoff(
     result_sets: FixtureResultSets,
 ):
     pass
-
-
-def test_search_result_computed_properties():
-    result = SearchResult(
-        data=ApplicationSummary(
-            application_ref="1:0x123:0",
-            round_id="0x123",
-            round_application_id="0",
-            chain_id=10,
-            project_id="0x1",
-            name="Example",
-            website_url="https://example.com",
-            banner_image_cid="abc123",
-            logo_image_cid="def456",
-            summary_text="example",
-        ),
-        meta=SearchResultMeta(search_score=1.5, search_type="fulltext"),
-    )
-
-    assert result.data.banner_image_url == "https://ipfs.io/ipfs/abc123"
