@@ -1,7 +1,6 @@
 import pytest
 from typing import List
 from src.data import InputDocument
-from src.search import ApplicationSummary, SearchResult, SearchResultMeta
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 from src.search_hybrid import combine_results

@@ -5,7 +5,7 @@ from strip_markdown import strip_markdown
 
 MAX_SUMMARY_TEXT_LENGTH = 300
 
-APPLICATIONS_JSON_JQ_SCHEMA = ".[] | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }"
+APPLICATIONS_JSON_JQ_SCHEMA = '.[] | select(.status == "APPROVED") | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }'
 
 
 class InvalidInputDocumentException(Exception):
