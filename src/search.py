@@ -1,13 +1,17 @@
+from enum import Enum
 from typing import List, Any, Literal, Self, Union
 from pydantic import BaseModel, Field
 from abc import ABC, abstractmethod
 from src.data import InputDocument
 
 
+class SearchType(str, Enum):
+    fulltext = "fulltext"
+    semantic = "semantic"
+
+
 class SearchResultMeta(BaseModel):
-    search_type: Union[Literal["fulltext"], Literal["semantic"]] = Field(
-        serialization_alias="searchType"
-    )
+    search_type: SearchType = Field(serialization_alias="searchType")
     search_score: float = Field(serialization_alias="searchScore")
 
 
