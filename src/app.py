@@ -3,6 +3,7 @@ from typing import Dict, List
 from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from src.config import Settings
 from src.data import load_input_documents_from_applications_dir
@@ -51,6 +52,7 @@ fulltext_search_engine.index(input_documents)
 
 
 app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
 
 ######################################################################
 # API TYPES
