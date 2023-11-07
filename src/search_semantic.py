@@ -3,8 +3,8 @@ import logging
 from langchain.vectorstores import Chroma
 from typing import List
 from langchain.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from src.data import InputDocument
-from src.search import SearchEngine, SearchResult
+from src.util import InputDocument
+from src.search import SearchEngine, SearchEngineResult, SearchType
 
 embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
 
@@ -26,13 +26,13 @@ class SemanticSearchEngine(SearchEngine):
 
         sample = persisted_db.get(limit=1)
         if len(sample["ids"]) == 0:
-            logging.debug(
-                "could not load persisted chromadb from %s", persist_directory
+            raise Exception(
+                f"Could not load persisted chromadb from {persist_directory}"
             )
-            raise Exception("No persisted data")
         else:
             logging.debug("chromadb loaded from %s", persist_directory)
-            self.db = persisted_db
+
+        self.db = persisted_db
 
     def index(
         self,
@@ -60,17 +60,14 @@ class SemanticSearchEngine(SearchEngine):
 
         self.db.persist()
 
-    def search(self, query_string: str) -> List[SearchResult]:
+    def search(self, query_string: str) -> List[SearchEngineResult]:
         return [
-            SearchResult.from_input_document(
-                input_document=InputDocument(raw_doc),
-                search_score=score,
-                search_type="semantic",
+            SearchEngineResult(
+                ref=raw_doc.metadata["application_ref"],
+                score=score,
+                type=SearchType.semantic,
             )
             for raw_doc, score in self.db.similarity_search_with_relevance_scores(
                 query_string, k=10
             )
         ]
-
-    def _hack_get_db(self) -> Chroma:
-        return self.db

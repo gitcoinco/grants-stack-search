@@ -1,9 +1,19 @@
 from typing import cast
 import pytest
 from src.data import (
-    load_input_documents_from_applications_dir,
+    deprecated_load_input_documents_from_applications_dir,
     load_input_documents_from_file,
 )
+
+
+@pytest.mark.skip(reason="TODO")
+def test_load_data():
+    pass
+
+
+@pytest.mark.skip(reason="TODO")
+def test_write_data():
+    pass
 
 
 def test_load_applications_from_file():
@@ -55,7 +65,7 @@ def test_load_applications_from_file():
 
 
 def test_load_applications_dir():
-    input_documents = load_input_documents_from_applications_dir(
+    input_documents = deprecated_load_input_documents_from_applications_dir(
         "tests/fixtures/sample_applications_by_round", chain_id=10
     )
     # TODO explicitly assert that applications with status != "APPROVED" are not included
@@ -91,7 +101,6 @@ def test_load_applications_dir():
         == "https://linktr.ee/refimedellin"
     )
     summary_text = cast(str, input_documents[0].document.metadata.get("summary_text"))
-    print(summary_text)
     assert summary_text.startswith(
         "We are the movement towards a more sustainable and equitable future"
     )

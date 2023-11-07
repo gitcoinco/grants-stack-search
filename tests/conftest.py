@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import pickle
 import os
-from typing import List, Literal, Union
+from typing import List, Literal, Union, Dict
 from src.data import (
     InputDocument,
     deprecated_load_input_documents_from_projects_json,
@@ -9,7 +9,11 @@ from src.data import (
 import pytest
 import logging
 
-from src.search import SearchEngine, SearchResult
+from src.search import (
+    ApplicationSummary,
+    SearchEngine,
+    SearchEngineResult,
+)
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 
@@ -30,23 +34,35 @@ def input_documents() -> List[InputDocument]:
     )
 
 
+@pytest.fixture(scope="session")
+def application_summaries_by_ref(
+    input_documents: List[InputDocument],
+) -> Dict[str, ApplicationSummary]:
+    application_summaries_by_ref: Dict[str, ApplicationSummary] = {}
+    for input_document in input_documents:
+        application_summaries_by_ref[
+            input_document.document.metadata["application_ref"]
+        ] = ApplicationSummary.from_metadata(input_document.document.metadata)
+    return application_summaries_by_ref
+
+
 @dataclass
 class FixtureResultSets:
-    fulltext_black_hare: List[SearchResult]
-    semantic_black_hare: List[SearchResult]
-    fulltext_education: List[SearchResult]
-    semantic_education: List[SearchResult]
-    fulltext_nature_preservation: List[SearchResult]
-    semantic_nature_preservation: List[SearchResult]
-    fulltext_blck_hare: List[SearchResult]
-    semantic_blck_hare: List[SearchResult]
+    fulltext_black_hare: List[SearchEngineResult]
+    semantic_black_hare: List[SearchEngineResult]
+    fulltext_education: List[SearchEngineResult]
+    semantic_education: List[SearchEngineResult]
+    fulltext_nature_preservation: List[SearchEngineResult]
+    semantic_nature_preservation: List[SearchEngineResult]
+    fulltext_blck_hare: List[SearchEngineResult]
+    semantic_blck_hare: List[SearchEngineResult]
 
 
 @pytest.fixture(scope="session")
 def result_sets() -> FixtureResultSets:
     def generate_search_result_fixture(
         search_engine: SearchEngine, query: str
-    ) -> List[SearchResult]:
+    ) -> List[SearchEngineResult]:
         search_type = search_engine.__class__.__name__.lower().replace(
             "searchengine", ""
         )
@@ -63,7 +79,7 @@ def result_sets() -> FixtureResultSets:
 
     def load_search_result_fixture(
         search_type: Union[Literal["fulltext"], Literal["semantic"]], query: str
-    ) -> List[SearchResult]:
+    ) -> List[SearchEngineResult]:
         query_filename_part = query.replace(" ", "_")
         fixture_filename = (
             f"{SEARCH_RESULTS_FIXTURES_DIR}/{search_type}_{query_filename_part}.pickle"

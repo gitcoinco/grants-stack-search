@@ -1,8 +1,9 @@
+from dataclasses import dataclass
 from enum import Enum
-from typing import List, Any, Literal, Self, Union
+from typing import List, Any, Self
 from pydantic import BaseModel, Field
 from abc import ABC, abstractmethod
-from src.data import InputDocument
+from src.util import InputDocument
 
 
 class SearchType(str, Enum):
@@ -45,35 +46,11 @@ class ApplicationSummary(BaseModel):
         )
 
 
-class SearchResult(BaseModel):
-    meta: SearchResultMeta
-    data: ApplicationSummary
-
-    @classmethod
-    def from_content_and_metadata(
-        cls,
-        content: Any,
-        metadata: Any,
-        search_score: float,
-        search_type: SearchType,
-    ) -> Self:
-        return cls(
-            data=ApplicationSummary.from_metadata(metadata),
-            meta=SearchResultMeta(search_score=search_score, search_type=search_type),
-        )
-
-    @classmethod
-    def from_input_document(
-        cls,
-        input_document: InputDocument,
-        search_score: float,
-        search_type: SearchType,
-    ) -> Self:
-        metadata = input_document.document.metadata
-        content = input_document.document.page_content
-        return cls.from_content_and_metadata(
-            content, metadata, search_score=search_score, search_type=search_type
-        )
+@dataclass
+class SearchEngineResult:
+    ref: str
+    score: float
+    type: SearchType
 
 
 class SearchEngine(ABC):
@@ -82,7 +59,7 @@ class SearchEngine(ABC):
         pass
 
     @abstractmethod
-    def search(self, query_string: str) -> List[SearchResult]:
+    def search(self, query_string: str) -> List[SearchEngineResult]:
         pass
 
 

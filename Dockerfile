@@ -14,11 +14,11 @@ RUN touch README.md
 RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
 
 FROM python:3.11-slim-bookworm as runtime
-RUN apt-get update && apt-get install -y wget && apt-get clean
 
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
-    PORT=8000
+    PORT=8000 \
+    PYTHONPATH=/app
 
 COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
@@ -26,19 +26,4 @@ WORKDIR /app
 COPY src ./src
 COPY static ./static
 
-# Download applications for specified rounds
-ARG APPLICATIONS_DOWNLOADER_INDEXER_BASE_URL=https://indexer-production.fly.dev/
-ARG APPLICATIONS_DOWNLOADER_DOWNLOAD_DIR=/tmp/applications_by_round
-ARG APPLICATIONS_DOWNLOADER_CHAIN_ID=10
-ARG APPLICATIONS_DOWNLOADER_ROUND_IDS=0x10be322DE44389DeD49c0b2b73d8c3A1E3B6D871,0xc5FdF5cFf79e92FAc1d6Efa725c319248D279200,0x9331FDe4Db7b9d9d1498C09d30149929f24cF9D5,0xb6Be0eCAfDb66DD848B0480db40056Ff94A9465d,0x2871742B184633f8DC8546c6301cbC209945033e,0x8de918F0163b2021839A8D84954dD7E8e151326D
-RUN APPLICATIONS_DOWNLOADER_DOWNLOAD_DIR=$APPLICATIONS_DOWNLOADER_DOWNLOAD_DIR \
-    APPLICATIONS_DOWNLOADER_CHAIN_ID=$APPLICATIONS_DOWNLOADER_CHAIN_ID \
-    APPLICATIONS_DOWNLOADER_ROUND_IDS=$APPLICATIONS_DOWNLOADER_ROUND_IDS \
-    APPLICATIONS_DOWNLOADER_INDEXER_BASE_URL=$APPLICATIONS_DOWNLOADER_INDEXER_BASE_URL \
-    .venv/bin/python src/scripts/applications_downloader.py
-
-ARG CHAIN_ID=10
-
-ENV CHAIN_ID=$CHAIN_ID
-ENV APPLICATIONS_DIR=/tmp/applications_by_round
-CMD ["/bin/bash", "-c", "uvicorn --host 0.0.0.0 --port $PORT src.app:app"]
+CMD ["/bin/bash", "-c", "python src/main.py"]

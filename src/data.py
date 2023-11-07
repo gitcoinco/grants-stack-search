@@ -1,7 +1,24 @@
-from typing import List, cast, Dict, Any
+import os
+import time
+import pickle
+from os import path
+import requests
+import tempfile
+from typing import Dict, List, Self
+from dataclasses import dataclass
 from langchain.schema import Document
 from langchain.document_loaders import JSONLoader, DirectoryLoader
 from strip_markdown import strip_markdown
+from src.search_fulltext import FullTextSearchEngine
+from src.search_semantic import SemanticSearchEngine
+from src.search import ApplicationSummary
+from src.util import (
+    ApplicationFileLocator,
+    InputDocument,
+    InvalidInputDocumentException,
+    get_indexer_url_from_application_file_locator,
+)
+
 
 MAX_SUMMARY_TEXT_LENGTH = 300
 
@@ -9,29 +26,13 @@ MAX_SUMMARY_TEXT_LENGTH = 300
 APPLICATIONS_JSON_JQ_SCHEMA = '.[] | select(.status == "APPROVED") | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, payout_wallet_address: .metadata.application.recipient, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }'
 
 
-class InvalidInputDocumentException(Exception):
-    pass
-
-
-# Wrap a Document to carry validity information together with the type
-class InputDocument:
-    def __init__(self, document: Document):
-        if (
-            isinstance(document.metadata.get("application_ref"), str)
-            and isinstance(document.metadata.get("name"), str)
-            and isinstance(document.metadata.get("website_url"), str)
-            and isinstance(document.metadata.get("round_id"), str)
-            and isinstance(document.metadata.get("chain_id"), int)
-            and isinstance(document.metadata.get("round_application_id"), str)
-            and isinstance(document.metadata.get("payout_wallet_address"), str)
-            # banner_image_cid and logo_image_cid are optional
-            and document.page_content is not None
-        ):
-            self.document = document
-        else:
-            raise InvalidInputDocumentException(
-                document.metadata.get("application_ref")
-            )
+def load_input_documents_from_url_and_chain(
+    applications_json_url: str, chain_id: int
+) -> List[InputDocument]:
+    response = requests.get(applications_json_url)
+    with tempfile.NamedTemporaryFile() as tmp:
+        tmp.write(response.content)
+        return load_input_documents_from_file(tmp.name, chain_id=chain_id)
 
 
 def load_input_documents_from_file(
@@ -56,7 +57,7 @@ def load_input_documents_from_file(
     return documents
 
 
-def load_input_documents_from_applications_dir(
+def deprecated_load_input_documents_from_applications_dir(
     applications_dir_path: str, chain_id: int
 ) -> List[InputDocument]:
     loader = DirectoryLoader(
@@ -163,3 +164,73 @@ def deprecated_load_input_documents_from_projects_json(
             pass
 
     return input_documents
+
+
+@dataclass
+class Data:
+    application_summaries_by_ref: Dict[str, ApplicationSummary]
+    fulltext_search_engine: FullTextSearchEngine
+    semantic_search_engine: SemanticSearchEngine
+
+    @classmethod
+    def load(cls, storage_dir: str) -> Self:
+        most_recent_run_dir = path.join(storage_dir, max(os.listdir(storage_dir)))
+
+        with open(path.join(most_recent_run_dir, "applications.pkl"), "rb") as file:
+            application_summaries_by_ref = pickle.load(file)
+
+        semantic_search_engine = SemanticSearchEngine()
+        semantic_search_engine.load(path.join(most_recent_run_dir, "chromadb"))
+
+        fulltext_search_engine = FullTextSearchEngine()
+        fulltext_search_engine.load_index(
+            path.join(most_recent_run_dir, "fts-index.json")
+        )
+
+        return Data(
+            fulltext_search_engine=fulltext_search_engine,
+            semantic_search_engine=semantic_search_engine,
+            application_summaries_by_ref=application_summaries_by_ref,
+        )
+
+    @classmethod
+    def ingest_and_persist(
+        cls,
+        application_files_locators: List[ApplicationFileLocator],
+        storage_dir: str,
+    ) -> None:
+        input_documents: List[InputDocument] = []
+        for chain_round_ref in application_files_locators:
+            response = requests.get(
+                get_indexer_url_from_application_file_locator(
+                    chain_round_ref,
+                    indexer_base_url="https://indexer-production.fly.dev",
+                )
+            )
+            with tempfile.NamedTemporaryFile() as tmp:
+                tmp.write(response.content)
+                input_documents += load_input_documents_from_file(
+                    tmp.name, chain_id=chain_round_ref.chain_id
+                )
+
+        dir_for_this_run = path.join(storage_dir, str(int(time.time())))
+        os.makedirs(dir_for_this_run, exist_ok=False)
+
+        application_summaries_by_ref: Dict[str, ApplicationSummary] = {}
+        for input_document in input_documents:
+            application_summaries_by_ref[
+                input_document.document.metadata["application_ref"]
+            ] = ApplicationSummary.from_metadata(input_document.document.metadata)
+
+        semantic_search_engine = SemanticSearchEngine()
+        semantic_search_engine.index(
+            input_documents, persist_directory=path.join(dir_for_this_run, "chromadb")
+        )
+
+        fulltext_search_engine = FullTextSearchEngine()
+        fulltext_search_engine.index(input_documents)
+
+        fulltext_search_engine.save_index(path.join(dir_for_this_run, "fts-index.json"))
+
+        with open(path.join(dir_for_this_run, "applications.pkl"), "wb") as file:
+            pickle.dump(application_summaries_by_ref, file)
