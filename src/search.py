@@ -26,6 +26,7 @@ class ApplicationSummary(BaseModel):
     logo_image_cid: str | None = Field(serialization_alias="logoImageCid")
     banner_image_cid: str | None = Field(serialization_alias="bannerImageCid")
     summary_text: str = Field(serialization_alias="summaryText")
+    payout_wallet_address: str = Field(serialization_alias="payoutWalletAddress")
 
     @classmethod
     def from_metadata(cls, metadata: Any) -> Self:
@@ -40,6 +41,7 @@ class ApplicationSummary(BaseModel):
             logo_image_cid=metadata.get("logo_image_cid"),
             banner_image_cid=metadata.get("banner_image_cid"),
             summary_text=metadata.get("summary_text"),
+            payout_wallet_address=metadata.get("payout_wallet_address"),
         )
 
 
@@ -53,7 +55,7 @@ class SearchResult(BaseModel):
         content: Any,
         metadata: Any,
         search_score: float,
-        search_type: Union[Literal["fulltext"], Literal["semantic"]],
+        search_type: SearchType,
     ) -> Self:
         return cls(
             data=ApplicationSummary.from_metadata(metadata),
@@ -65,7 +67,7 @@ class SearchResult(BaseModel):
         cls,
         input_document: InputDocument,
         search_score: float,
-        search_type: Union[Literal["fulltext"], Literal["semantic"]],
+        search_type: SearchType,
     ) -> Self:
         metadata = input_document.document.metadata
         content = input_document.document.page_content

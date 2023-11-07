@@ -11,10 +11,15 @@ def test_load_applications_from_file():
         "tests/fixtures/sample_applications_by_round/0x10be322DE44389DeD49c0b2b73d8c3A1E3B6D871.json",
         chain_id=10,
     )
+
     assert len(input_documents) == 31
     assert (
         input_documents[0].document.metadata.get("application_ref")
         == "10:0x10be322DE44389DeD49c0b2b73d8c3A1E3B6D871:1"
+    )
+    assert (
+        input_documents[0].document.metadata.get("payout_wallet_address")
+        == "0x2661c66C99f3184Bef72fd3CeD5040398c31D277"
     )
     assert (
         input_documents[0].document.metadata.get("project_id")

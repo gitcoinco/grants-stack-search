@@ -5,7 +5,8 @@ from strip_markdown import strip_markdown
 
 MAX_SUMMARY_TEXT_LENGTH = 300
 
-APPLICATIONS_JSON_JQ_SCHEMA = '.[] | select(.status == "APPROVED") | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }'
+
+APPLICATIONS_JSON_JQ_SCHEMA = '.[] | select(.status == "APPROVED") | { round_id: .roundId, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, payout_wallet_address: .metadata.application.recipient, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg }'
 
 
 class InvalidInputDocumentException(Exception):
@@ -22,6 +23,7 @@ class InputDocument:
             and isinstance(document.metadata.get("round_id"), str)
             and isinstance(document.metadata.get("chain_id"), int)
             and isinstance(document.metadata.get("round_application_id"), str)
+            and isinstance(document.metadata.get("payout_wallet_address"), str)
             # banner_image_cid and logo_image_cid are optional
             and document.page_content is not None
         ):
@@ -87,6 +89,7 @@ def get_application_json_document_metadata(record: dict, metadata: dict) -> dict
     metadata["website_url"] = record.get("website_url")
     metadata["round_id"] = record.get("round_id")
     metadata["round_application_id"] = record.get("round_application_id")
+    metadata["payout_wallet_address"] = record.get("payout_wallet_address")
     banner_image_cid = record.get("banner_image_cid")
     if banner_image_cid is not None:
         metadata["banner_image_cid"] = banner_image_cid
@@ -129,6 +132,7 @@ def deprecated_load_input_documents_from_projects_json(
         metadata["round_application_id"] = str(fake_application_counter)
         metadata["chain_id"] = 1
         metadata["application_ref"] = f"1:0x123:{fake_application_counter}"
+        metadata["payout_wallet_address"] = f"0xrecipient-{fake_application_counter}"
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
             metadata["banner_image_cid"] = banner_image_cid
