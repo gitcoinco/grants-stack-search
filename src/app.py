@@ -48,7 +48,7 @@ class ApplicationsResponse(BaseModel):
 
 
 @app.get("/search")
-def search(q: str) -> SearchResponse:
+async def search(q: str) -> SearchResponse:
     try:
         query = SearchQuery(q)
     except Exception as e:
@@ -85,7 +85,7 @@ def search(q: str) -> SearchResponse:
 
 
 @app.get("/applications")
-def get_applications() -> ApplicationsResponse:
+async def get_applications() -> ApplicationsResponse:
     return ApplicationsResponse(
         application_summaries=list(data.application_summaries_by_ref.values())
     )
