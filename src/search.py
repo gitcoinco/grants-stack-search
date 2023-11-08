@@ -30,6 +30,8 @@ class ApplicationSummary(BaseModel):
     summary_text: str = Field(serialization_alias="summaryText")
     payout_wallet_address: str = Field(serialization_alias="payoutWalletAddress")
     created_at_block: int = Field(serialization_alias="createdAtBlock")
+    contributor_count: int = Field(serialization_alias="contributorCount")
+    contributions_total_usd: float = Field(serialization_alias="contributionsTotalUsd")
 
     @classmethod
     def from_metadata(cls, metadata: Any) -> Self:
@@ -47,6 +49,8 @@ class ApplicationSummary(BaseModel):
             summary_text=metadata.get("summary_text"),
             payout_wallet_address=metadata.get("payout_wallet_address"),
             created_at_block=metadata.get("created_at_block"),
+            contributor_count=metadata.get("contributor_count"),
+            contributions_total_usd=metadata.get("contributions_total_usd"),
         )
 
 

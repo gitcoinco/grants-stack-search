@@ -52,6 +52,12 @@
         margin-top: 0;
       }
 
+      article.application-summary > footer > .round-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       article.application-summary .fade-out {
         position: absolute;
         bottom: 0;
@@ -236,6 +242,7 @@
                   {{ r.data.name }}
                 </a>
               </h5>
+
               <div>{{ r.data.summaryText }}</div>
               <div class="fade-out"></div>
             </div>
@@ -247,6 +254,12 @@
                   href="https://explorer.gitcoin.co/#/round/{{ r.data.chainId }}/{{ r.data.roundId }}"
                   >{{ r.data.roundName }}</a
                 >
+              </div>
+              <div>
+                <small>
+                  {{ r.data.contributionsTotalUsd | round(2, 'floor' )}} USD
+                  contributed by {{ r.data.contributorCount }} people
+                </small>
               </div>
             </footer>
           </article>

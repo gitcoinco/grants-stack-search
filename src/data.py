@@ -79,6 +79,9 @@ def load_input_documents_from_file(
         metadata["round_application_id"] = record.get("round_application_id")
         metadata["payout_wallet_address"] = record.get("payout_wallet_address")
         metadata["created_at_block"] = record.get("created_at_block")
+        metadata["contributor_count"] = record.get("contributor_count")
+        metadata["contributions_total_usd"] = record.get("contributions_total_usd")
+
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
             metadata["banner_image_cid"] = banner_image_cid
@@ -90,7 +93,7 @@ def load_input_documents_from_file(
     jq_schema = ".[]"
     if approved_applications_only:
         jq_schema += ' | select(.status == "APPROVED")'
-    jq_schema += " | { chain_id: .chainId, round_id: .roundId, round_name: .roundName, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, payout_wallet_address: .metadata.application.recipient, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg, created_at_block: .createdAtBlock }"
+    jq_schema += " | { chain_id: .chainId, round_id: .roundId, round_name: .roundName, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, payout_wallet_address: .metadata.application.recipient, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg, created_at_block: .createdAtBlock, contributions_total_usd: .amountUSD, contributor_count: .uniqueContributors }"
 
     loader = JSONLoader(
         applications_file_path,
@@ -145,6 +148,8 @@ def deprecated_load_input_documents_from_projects_json(
         metadata["application_ref"] = f"1:0x123:{fake_application_counter}"
         metadata["payout_wallet_address"] = f"0xrecipient-{fake_application_counter}"
         metadata["created_at_block"] = 123456
+        metadata["contributor_count"] = 1
+        metadata["contributions_total_usd"] = 100
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
             metadata["banner_image_cid"] = banner_image_cid
