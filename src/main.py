@@ -1,4 +1,3 @@
-import multiprocessing
 import uvicorn
 import logging
 from dotenv import load_dotenv
@@ -8,9 +7,20 @@ from src.util import parse_applicaton_file_locators
 from src.data import Data
 
 
-logging.basicConfig(level=logging.DEBUG, format="%(levelname)s: %(message)s")
 load_dotenv()
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
+logging.basicConfig(level=settings.log_level, format="%(levelname)s: %(message)s")
+
+
+def update_dataset():
+    Data.ingest_and_persist(
+        application_files_locators=parse_applicaton_file_locators(
+            settings.application_files_locators
+        ),
+        storage_dir=settings.storage_dir,
+        indexer_base_url=settings.indexer_base_url,
+        first_run=False,
+    )
 
 
 def main():
@@ -22,11 +32,18 @@ def main():
         ),
         storage_dir=settings.storage_dir,
         indexer_base_url=settings.indexer_base_url,
+        first_run=True,
     )
 
-    # scheduler = BackgroundScheduler()
-    # scheduler.add_job(update_dataset, "interval", seconds=60 * 10, max_instances=1)
-    # scheduler.start()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(
+        update_dataset,
+        "interval",
+        seconds=settings.update_interval_seconds,
+        max_instances=1,
+        name="Update applications data",
+    )
+    scheduler.start()
 
     if settings.auto_reload is True and settings.http_workers is not None:
         raise Exception("Auto reload and multiple HTTP workers are mutually exclusive.")
@@ -39,6 +56,7 @@ def main():
         reload=settings.auto_reload,
         port=settings.port,
         workers=settings.http_workers,
+        reload_includes=["src"],
     )
 
 

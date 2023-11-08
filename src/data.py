@@ -1,14 +1,13 @@
-import os
 import time
+import shutil
+import os
 import pickle
 from os import path
 import requests
-import tempfile
 import logging
-from typing import Dict, List, Self, Any
-from dataclasses import dataclass
+from typing import Dict, List, Any
 from langchain.schema import Document
-from langchain.document_loaders import JSONLoader, DirectoryLoader
+from langchain.document_loaders import JSONLoader
 from strip_markdown import strip_markdown
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
@@ -22,7 +21,7 @@ from src.util import (
     get_rounds_file_url_from_chain_id,
 )
 
-
+# TODO lift to configuration
 MAX_SUMMARY_TEXT_LENGTH = 300
 
 
@@ -70,6 +69,24 @@ def fetch_and_enrich_applications(
 def load_input_documents_from_file(
     applications_file_path: str, approved_applications_only: bool = True
 ) -> List[InputDocument]:
+    def get_application_json_document_metadata(record: dict, metadata: dict) -> dict:
+        metadata["project_id"] = record.get("project_id")
+        metadata["name"] = record.get("name")
+        metadata["website_url"] = record.get("website_url")
+        metadata["chain_id"] = record.get("chain_id")
+        metadata["round_id"] = record.get("round_id")
+        metadata["round_name"] = record.get("round_name")
+        metadata["round_application_id"] = record.get("round_application_id")
+        metadata["payout_wallet_address"] = record.get("payout_wallet_address")
+        metadata["created_at_block"] = record.get("created_at_block")
+        banner_image_cid = record.get("banner_image_cid")
+        if banner_image_cid is not None:
+            metadata["banner_image_cid"] = banner_image_cid
+        logo_image_cid = record.get("logo_image_cid")
+        if logo_image_cid is not None:
+            metadata["logo_image_cid"] = logo_image_cid
+        return metadata
+
     jq_schema = ".[]"
     if approved_applications_only:
         jq_schema += ' | select(.status == "APPROVED")'
@@ -92,25 +109,6 @@ def load_input_documents_from_file(
             pass
 
     return documents
-
-
-def get_application_json_document_metadata(record: dict, metadata: dict) -> dict:
-    metadata["project_id"] = record.get("project_id")
-    metadata["name"] = record.get("name")
-    metadata["website_url"] = record.get("website_url")
-    metadata["chain_id"] = record.get("chain_id")
-    metadata["round_id"] = record.get("round_id")
-    metadata["round_name"] = record.get("round_name")
-    metadata["round_application_id"] = record.get("round_application_id")
-    metadata["payout_wallet_address"] = record.get("payout_wallet_address")
-    metadata["created_at_block"] = record.get("created_at_block")
-    banner_image_cid = record.get("banner_image_cid")
-    if banner_image_cid is not None:
-        metadata["banner_image_cid"] = banner_image_cid
-    logo_image_cid = record.get("logo_image_cid")
-    if logo_image_cid is not None:
-        metadata["logo_image_cid"] = logo_image_cid
-    return metadata
 
 
 def enrich_raw_document_with_computed_metadata(document: Document) -> None:
@@ -179,55 +177,69 @@ def deprecated_load_input_documents_from_projects_json(
     return input_documents
 
 
-@dataclass
 class Data:
-    application_summaries_by_ref: Dict[str, ApplicationSummary]
-    fulltext_search_engine: FullTextSearchEngine
-    semantic_search_engine: SemanticSearchEngine
+    """
+    Convenience aggregation of all the data the service is meant to use during operation.
+    """
+
+    application_summaries_by_ref: Dict[str, ApplicationSummary] | None
+    fulltext_search_engine: FullTextSearchEngine | None
+    semantic_search_engine: SemanticSearchEngine | None
+
+    def __init__(self, storage_dir: str):
+        self.storage_dir = storage_dir
+        self.application_summaries_by_ref = None
+        self.fulltext_search_engine = None
+        self.semantic_search_engine = None
+
+    # TODO test
+    def reload(self):
+        # Only application data is reloaded because indices are
+        # currently only built once on service startup.
+
+        with open(path.join(self.storage_dir, "applications.pkl"), "rb") as file:
+            self.application_summaries_by_ref = pickle.load(file)
+
+        if self.fulltext_search_engine is None:
+            self.fulltext_search_engine = FullTextSearchEngine()
+            self.fulltext_search_engine.load_index(
+                path.join(self.storage_dir, "fulltext_search_index.json")
+            )
+
+        if self.semantic_search_engine is None:
+            self.semantic_search_engine = SemanticSearchEngine()
+            self.semantic_search_engine.load(path.join(self.storage_dir, "chromadb"))
 
     @classmethod
-    def load(cls, storage_dir: str) -> Self:
-        most_recent_run_dir = path.join(storage_dir, max(os.listdir(storage_dir)))
-
-        with open(path.join(most_recent_run_dir, "applications.pkl"), "rb") as file:
-            application_summaries_by_ref = pickle.load(file)
-
-        semantic_search_engine = SemanticSearchEngine()
-        semantic_search_engine.load(path.join(most_recent_run_dir, "chromadb"))
-
-        fulltext_search_engine = FullTextSearchEngine()
-        fulltext_search_engine.load_index(
-            path.join(most_recent_run_dir, "fts-index.json")
-        )
-
-        return Data(
-            fulltext_search_engine=fulltext_search_engine,
-            semantic_search_engine=semantic_search_engine,
-            application_summaries_by_ref=application_summaries_by_ref,
-        )
-
-    @classmethod
+    # TODO test
     def ingest_and_persist(
         cls,
         application_files_locators: List[ApplicationFileLocator],
         storage_dir: str,
         indexer_base_url: str,
+        first_run: bool,
     ) -> None:
-        dir_for_this_run = path.join(storage_dir, str(int(time.time())))
-        os.makedirs(dir_for_this_run, exist_ok=False)
-        dataset_filename = path.join(dir_for_this_run, "applications_aggregate.json")
+        if first_run and os.path.exists(storage_dir):
+            logging.info(f"Clearing {storage_dir}...")
+            shutil.rmtree(storage_dir)
 
-        with open(dataset_filename, "w") as f:
-            json.dump(
-                fetch_and_enrich_applications(
-                    application_files_locators, indexer_base_url
-                ),
-                f,
-                indent=2,
+        os.makedirs(storage_dir, exist_ok=True)
+
+        source_dataset_filename = path.join(storage_dir, "applications_aggregate.json")
+        applications_filename = path.join(storage_dir, "applications.pkl")
+        fulltext_index_filename = path.join(storage_dir, "fulltext_search_index.json")
+        semantic_index_dirname = path.join(storage_dir, "chromadb")
+
+        with open(source_dataset_filename, "w") as f:
+            aggregated_applications = fetch_and_enrich_applications(
+                application_files_locators,
+                indexer_base_url,
             )
+            aggregated_applications[0]["projectId"] = str(int(time.time()))
+            json.dump(aggregated_applications, f, indent=2)
 
         input_documents = load_input_documents_from_file(
-            dataset_filename, approved_applications_only=False
+            source_dataset_filename, approved_applications_only=False
         )
 
         application_summaries_by_ref: Dict[str, ApplicationSummary] = {}
@@ -236,15 +248,23 @@ class Data:
                 input_document.document.metadata["application_ref"]
             ] = ApplicationSummary.from_metadata(input_document.document.metadata)
 
-        semantic_search_engine = SemanticSearchEngine()
-        semantic_search_engine.index(
-            input_documents, persist_directory=path.join(dir_for_this_run, "chromadb")
-        )
-
-        fulltext_search_engine = FullTextSearchEngine()
-        fulltext_search_engine.index(input_documents)
-
-        fulltext_search_engine.save_index(path.join(dir_for_this_run, "fts-index.json"))
-
-        with open(path.join(dir_for_this_run, "applications.pkl"), "wb") as file:
+        with open(applications_filename + ".tmp", "wb") as file:
             pickle.dump(application_summaries_by_ref, file)
+        os.rename(applications_filename + ".tmp", applications_filename)
+
+        if first_run:
+            if os.path.exists(fulltext_index_filename) or os.path.exists(
+                semantic_index_dirname
+            ):
+                raise Exception(
+                    "Reindexing not yet supported. Remove old indices before restarting service."
+                )
+
+            semantic_search_engine = SemanticSearchEngine()
+            semantic_search_engine.index(
+                input_documents, persist_directory=semantic_index_dirname
+            )
+
+            fulltext_search_engine = FullTextSearchEngine()
+            fulltext_search_engine.index(input_documents)
+            fulltext_search_engine.save_index(fulltext_index_filename)

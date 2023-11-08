@@ -3,11 +3,25 @@ from rake_nltk import Rake
 import pytest
 import nltk
 from pprint import pprint
-from src.data import fetch_and_enrich_applications
+from src.data import Data
 from src.util import ApplicationFileLocator
 
 
 # NOTE: these are not real tests, we're using pytest as a testbed.
+
+
+@pytest.mark.skip
+def test_ingest_and_persist(tmp_path):
+    Data.ingest_and_persist(
+        application_files_locators=[
+            ApplicationFileLocator(
+                round_id="0x98720dD1925d34a2453ebC1F91C9d48E7e89ec29", chain_id=424
+            ),
+        ],
+        storage_dir=tmp_path,
+        indexer_base_url="https://indexer-staging.fly.dev",
+        first_run=True,
+    )
 
 
 @pytest.mark.skip

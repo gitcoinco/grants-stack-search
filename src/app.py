@@ -1,5 +1,6 @@
 import logging
 from typing import List
+from apscheduler.schedulers.background import BackgroundScheduler
 from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
@@ -19,9 +20,22 @@ settings = Settings()  # type: ignore -- TODO investigate why this is necessary
 ######################################################################
 # STATE
 
+
+data = Data(settings.storage_dir)
+data.reload()
+
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
-data = Data.load(settings.storage_dir)
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    lambda: data.reload(),
+    "interval",
+    seconds=settings.reload_interval_seconds,
+    max_instances=1,
+    name="Reload application data",
+)
+scheduler.start()
 
 
 ######################################################################
