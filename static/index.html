@@ -39,16 +39,17 @@
       }
 
       article.application-summary {
-        height: 20rem;
-        overflow: hidden;
-        font-size: 12px;
-        position: relative;
         margin-top: calc(var(--block-spacing-vertical) * 0.125);
       }
 
       article.application-summary > header {
         background-size: cover;
         height: calc(var(--block-spacing-vertical) * 2);
+      }
+
+      article.application-summary > footer {
+        font-size: 12px;
+        margin-top: 0;
       }
 
       article.application-summary .fade-out {
@@ -58,8 +59,15 @@
         width: 100%;
         text-align: center;
         margin: 0;
-        padding: 40px 0;
+        padding: 20px 0;
         background-image: linear-gradient(to bottom, transparent, #fff);
+      }
+
+      article.application-summary .body {
+        height: 12rem;
+        overflow: hidden;
+        font-size: 12px;
+        position: relative;
       }
 
       article.application > header {
@@ -219,16 +227,28 @@
             <header
               style="background-image: url(https://ipfs.io/ipfs/{{ r.data.bannerImageCid}})"
             ></header>
-            <h5>
-              <a
-                href="https://explorer.gitcoin.co/#/round/{{ r.data.chainId }}/{{ r.data.roundId }}/{{ r.data.roundId }}-{{ r.data.roundApplicationId }}"
-                target="_blank"
-              >
-                {{ r.data.name }}
-              </a>
-            </h5>
-            <div>{{ r.data.summaryText }}</div>
-            <div class="fade-out"></div>
+            <div class="body">
+              <h5>
+                <a
+                  href="https://explorer.gitcoin.co/#/round/{{ r.data.chainId }}/{{ r.data.roundId }}/{{ r.data.roundId }}-{{ r.data.roundApplicationId }}"
+                  target="_blank"
+                >
+                  {{ r.data.name }}
+                </a>
+              </h5>
+              <div>{{ r.data.summaryText }}</div>
+              <div class="fade-out"></div>
+            </div>
+            <footer>
+              <div class="round-name">
+                in
+                <a
+                  target="_blank"
+                  href="https://explorer.gitcoin.co/#/round/{{ r.data.chainId }}/{{ r.data.roundId }}"
+                  >{{ r.data.roundName }}</a
+                >
+              </div>
+            </footer>
           </article>
 
           {% endfor %}
