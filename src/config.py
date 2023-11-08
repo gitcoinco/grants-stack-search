@@ -9,3 +9,4 @@ class Settings(BaseSettings):
     port: int = 8000
     bind_address: str = "0.0.0.0"
     auto_reload: bool = False
+    indexer_base_url: str = "https://indexer-production.fly.dev"

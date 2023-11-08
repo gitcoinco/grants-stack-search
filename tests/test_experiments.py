@@ -3,6 +3,8 @@ from rake_nltk import Rake
 import pytest
 import nltk
 from pprint import pprint
+from src.data import fetch_and_enrich_applications
+from src.util import ApplicationFileLocator
 
 
 # NOTE: these are not real tests, we're using pytest as a testbed.

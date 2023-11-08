@@ -21,6 +21,7 @@ def main():
             settings.application_files_locators
         ),
         storage_dir=settings.storage_dir,
+        indexer_base_url=settings.indexer_base_url,
     )
 
     # scheduler = BackgroundScheduler()

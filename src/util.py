@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urljoin
 from langchain.schema import Document
 from typing import List
 from dataclasses import dataclass
@@ -53,7 +54,17 @@ def parse_applicaton_file_locators(
     )
 
 
-def get_indexer_url_from_application_file_locator(
+def get_rounds_file_url_from_chain_id(chain_id: int, indexer_base_url: str) -> str:
+    return urljoin(
+        indexer_base_url,
+        f"/data/{chain_id}/rounds.json",
+    )
+
+
+def get_applications_file_url_from_application_file_locator(
     application_file_locator: ApplicationFileLocator, indexer_base_url: str
 ) -> str:
-    return f"{indexer_base_url}/data/{application_file_locator.chain_id}/rounds/{application_file_locator.round_id}/applications.json"
+    return urljoin(
+        indexer_base_url,
+        f"/data/{application_file_locator.chain_id}/rounds/{application_file_locator.round_id}/applications.json",
+    )

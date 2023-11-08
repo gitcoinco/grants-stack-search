@@ -21,6 +21,7 @@ class ApplicationSummary(BaseModel):
     chain_id: int = Field(serialization_alias="chainId")
     round_application_id: str = Field(serialization_alias="roundApplicationId")
     round_id: str = Field(serialization_alias="roundId")
+    round_name: str = Field(serialization_alias="roundName")
     project_id: str = Field(serialization_alias="projectId")
     name: str = Field(serialization_alias="name")
     website_url: str = Field(serialization_alias="websiteUrl")
@@ -35,6 +36,7 @@ class ApplicationSummary(BaseModel):
         return cls(
             application_ref=metadata.get("application_ref"),
             round_id=metadata.get("round_id"),
+            round_name=metadata.get("round_name"),
             round_application_id=metadata.get("round_application_id"),
             chain_id=metadata.get("chain_id"),
             project_id=metadata.get("project_id"),
