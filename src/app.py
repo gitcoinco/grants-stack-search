@@ -5,7 +5,7 @@ from typing import List
 from apscheduler.schedulers.background import BackgroundScheduler
 from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from src.data import Data
 from src.search import ApplicationSummary, SearchResultMeta
@@ -87,7 +87,7 @@ class ApplicationsResponse(BaseModel):
 
 
 @app.get("/search")
-async def search(q: str) -> SearchResponse:
+async def search(q: str, response: Response) -> SearchResponse:
     try:
         query = SearchQuery(q)
     except Exception as e:
@@ -114,6 +114,7 @@ async def search(q: str) -> SearchResponse:
     else:
         raise Exception('Unknown strategy: "%s"' % query.params.strategy)
 
+    response.headers["Cache-Control"] = f"max-age={settings.cache_max_age_seconds}"
     return SearchResponse(
         results=[
             SearchResult(
@@ -126,7 +127,8 @@ async def search(q: str) -> SearchResponse:
 
 
 @app.get("/applications")
-async def get_applications() -> ApplicationsResponse:
+async def get_applications(response: Response) -> ApplicationsResponse:
+    response.headers["Cache-Control"] = f"max-age={settings.cache_max_age_seconds}"
     return ApplicationsResponse(
         application_summaries=list(data.application_summaries_by_ref.values())
     )
