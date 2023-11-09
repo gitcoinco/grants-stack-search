@@ -1,10 +1,10 @@
 import pytest
 from typing import Dict, List
 from src.util import InputDocument
-from src.search import ApplicationSummary
+from src.search import ApplicationSummary, SearchEngineResult, SearchType
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
-from src.search_hybrid import combine_results
+from src.search_hybrid import combine_results, get_upper_outliers
 from tests.conftest import SearchResultsFixture
 from pprint import pprint
 
@@ -102,6 +102,27 @@ def test_hybrid_search_with_custom_fulltext_std_dev_factor(
     assert len(results) == 2
     assert application_summaries_by_ref[results[0].ref].name == "The Follow Black Hare"
     assert application_summaries_by_ref[results[1].ref].name == "Blacks on Blockchain"
+
+
+# @pytest.mark.only
+def test_hybrid_search_excludes_semantic_results_that_were_already_in_fulltext_results():
+    results = combine_results(
+        fulltext_results=[
+            SearchEngineResult(ref="0x1", score=0.5, type=SearchType.fulltext),
+            SearchEngineResult(ref="0x999", score=0.4, type=SearchType.fulltext),
+            SearchEngineResult(ref="0x123", score=0.1, type=SearchType.fulltext),
+        ],
+        semantic_results=[
+            SearchEngineResult(ref="0x2", score=0.4, type=SearchType.semantic),
+            SearchEngineResult(ref="0x999", score=0.2, type=SearchType.semantic),
+        ],
+        fulltext_std_dev_factor=1,
+    )
+
+    assert len(results) == 3
+    assert results[0].ref == "0x1"
+    assert results[1].ref == "0x999"
+    assert results[2].ref == "0x2"
 
 
 def test_hybrid_search_with_custom_semantic_score_cutoff():

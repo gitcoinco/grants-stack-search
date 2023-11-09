@@ -9,18 +9,23 @@ def combine_results(
     fulltext_std_dev_factor=3,
     semantic_score_cutoff=0.35,
 ) -> List[SearchEngineResult]:
-    if len(fulltext_results) > 2:
-        fulltext_subset = get_upper_outliers(
+    if len(fulltext_results) <= 2:
+        fulltext_subset = fulltext_results
+    else:
+        fulltext_outliers = get_upper_outliers(
             fulltext_results, std_dev_factor=fulltext_std_dev_factor
         )
-    else:
-        fulltext_subset = fulltext_results
+        if len(fulltext_outliers) > 0:
+            fulltext_subset = fulltext_outliers
+        else:
+            fulltext_subset = fulltext_results[0:2]
 
     semantic_subset = filter_out_low_semantic_score(
         semantic_results, cutoff=semantic_score_cutoff
     )
 
-    return fulltext_subset + semantic_subset
+    fulltext_refs = [r.ref for r in fulltext_subset]
+    return fulltext_subset + [r for r in semantic_subset if r.ref not in fulltext_refs]
 
 
 # pick items that are greater than `std_factor` standard deviations from the mean
