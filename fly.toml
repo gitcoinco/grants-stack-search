@@ -15,7 +15,7 @@ kill_timeout = "5s"
   ANONYMIZED_TELEMETRY = "False"
   # TODO change for production
   INDEXER_BASE_URL = "https://indexer-production.fly.dev"
-  LOG_LEVEL = "DEBUG"
+  LOG_LEVEL = "INFO"
   CACHE_MAX_AGE_SECONDS = "5"
 
 [[services]]
