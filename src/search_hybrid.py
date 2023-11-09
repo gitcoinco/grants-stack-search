@@ -20,8 +20,6 @@ def combine_results(
         semantic_results, cutoff=semantic_score_cutoff
     )
 
-    print(len(semantic_subset))
-
     return fulltext_subset + semantic_subset
 
 

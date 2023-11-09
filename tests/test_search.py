@@ -5,7 +5,7 @@ from src.search import ApplicationSummary
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 from src.search_hybrid import combine_results
-from tests.conftest import FixtureResultSets
+from tests.conftest import SearchResultsFixture
 from pprint import pprint
 
 
@@ -65,19 +65,20 @@ def test_semantic_search(
 
 
 def test_hybrid_search_with_strongly_relevant_keywords(
-    result_sets: FixtureResultSets,
+    result_sets: SearchResultsFixture,
     application_summaries_by_ref: Dict[str, ApplicationSummary],
 ):
     results = combine_results(
         semantic_results=result_sets.semantic_black_hare,
         fulltext_results=result_sets.fulltext_black_hare,
     )
+
     assert application_summaries_by_ref[results[0].ref].name == "The Follow Black Hare"
     assert len(results) == 1
 
 
 def test_hybrid_search_with_typo(
-    result_sets: FixtureResultSets,
+    result_sets: SearchResultsFixture,
     application_summaries_by_ref: Dict[str, ApplicationSummary],
 ):
     results = combine_results(
@@ -90,7 +91,7 @@ def test_hybrid_search_with_typo(
 
 
 def test_hybrid_search_with_custom_fulltext_std_dev_factor(
-    result_sets: FixtureResultSets,
+    result_sets: SearchResultsFixture,
     application_summaries_by_ref: Dict[str, ApplicationSummary],
 ):
     results = combine_results(
