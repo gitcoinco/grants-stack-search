@@ -1,9 +1,11 @@
+import socket
+import time
 import logging
 from typing import List
 from apscheduler.schedulers.background import BackgroundScheduler
 from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from src.data import Data
 from src.search import ApplicationSummary, SearchResultMeta
@@ -15,6 +17,7 @@ from src.config import Settings
 # CONFIGURATION
 
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
+HOSTNAME = socket.gethostname()
 
 
 ######################################################################
@@ -25,7 +28,6 @@ data = Data(settings.storage_dir)
 data.reload()
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
@@ -36,6 +38,29 @@ scheduler.add_job(
     name="Reload application data",
 )
 scheduler.start()
+
+
+######################################################################
+# MIDDLEWARES
+
+
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET"])
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
+
+
+@app.middleware("http")
+async def add_hostname_header(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["X-Hostname"] = HOSTNAME
+    return response
 
 
 ######################################################################
