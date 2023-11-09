@@ -187,15 +187,16 @@ class Data:
     Convenience aggregation of all the data the service is meant to use during operation.
     """
 
-    application_summaries_by_ref: Dict[str, ApplicationSummary] | None
-    fulltext_search_engine: FullTextSearchEngine | None
-    semantic_search_engine: SemanticSearchEngine | None
+    # TODO add properties that return applications and search engines
+    # but raise if they have not been initialized (i.e. if `reload` has not)
+    # been called after instantiation
+
+    application_summaries_by_ref: Dict[str, ApplicationSummary]
+    fulltext_search_engine: FullTextSearchEngine
+    semantic_search_engine: SemanticSearchEngine
 
     def __init__(self, storage_dir: str):
         self.storage_dir = storage_dir
-        self.application_summaries_by_ref = None
-        self.fulltext_search_engine = None
-        self.semantic_search_engine = None
 
     # TODO test
     def reload(self):
@@ -205,19 +206,19 @@ class Data:
         with open(path.join(self.storage_dir, "applications.pkl"), "rb") as file:
             self.application_summaries_by_ref = pickle.load(file)
 
-        if self.fulltext_search_engine is None:
+        if not hasattr(self, "fulltext_search_engine"):
             self.fulltext_search_engine = FullTextSearchEngine()
             self.fulltext_search_engine.load_index(
                 path.join(self.storage_dir, "fulltext_search_index.json")
             )
 
-        if self.semantic_search_engine is None:
+        if not hasattr(self, "semantic_search_engine"):
             self.semantic_search_engine = SemanticSearchEngine()
             self.semantic_search_engine.load(path.join(self.storage_dir, "chromadb"))
 
     @classmethod
     # TODO test
-    def ingest_and_persist(
+    def ingest_from_application_locators_and_persist(
         cls,
         application_files_locators: List[ApplicationFileLocator],
         storage_dir: str,
@@ -231,9 +232,6 @@ class Data:
         os.makedirs(storage_dir, exist_ok=True)
 
         source_dataset_filename = path.join(storage_dir, "applications_aggregate.json")
-        applications_filename = path.join(storage_dir, "applications.pkl")
-        fulltext_index_filename = path.join(storage_dir, "fulltext_search_index.json")
-        semantic_index_dirname = path.join(storage_dir, "chromadb")
 
         with open(source_dataset_filename, "w") as f:
             aggregated_applications = fetch_and_enrich_applications(
@@ -242,6 +240,20 @@ class Data:
             )
             aggregated_applications[0]["projectId"] = str(int(time.time()))
             json.dump(aggregated_applications, f, indent=2)
+
+        cls.ingest_from_file_and_persist(
+            source_dataset_filename=source_dataset_filename,
+            storage_dir=storage_dir,
+            first_run=first_run,
+        )
+
+    @classmethod
+    def ingest_from_file_and_persist(
+        cls, source_dataset_filename: str, storage_dir: str, first_run: bool
+    ) -> None:
+        applications_filename = path.join(storage_dir, "applications.pkl")
+        fulltext_index_filename = path.join(storage_dir, "fulltext_search_index.json")
+        semantic_index_dirname = path.join(storage_dir, "chromadb")
 
         input_documents = load_input_documents_from_file(
             source_dataset_filename, approved_applications_only=False

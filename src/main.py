@@ -13,7 +13,7 @@ logging.basicConfig(level=settings.log_level, format="%(levelname)s: %(message)s
 
 
 def update_dataset():
-    Data.ingest_and_persist(
+    Data.ingest_from_application_locators_and_persist(
         application_files_locators=parse_applicaton_file_locators(
             settings.application_files_locators
         ),
@@ -26,7 +26,7 @@ def update_dataset():
 def main():
     logging.info("Starting with config: %s", settings)
 
-    Data.ingest_and_persist(
+    Data.ingest_from_application_locators_and_persist(
         application_files_locators=parse_applicaton_file_locators(
             settings.application_files_locators
         ),
