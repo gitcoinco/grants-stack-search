@@ -18,7 +18,7 @@ class SearchQuery:
         parser = argparse.ArgumentParser()
         parser.add_argument("keywords", nargs="*")
         parser.add_argument("--strategy", default="hybrid")
-        parser.add_argument("--hybrid-search-fulltext-std-dev-factor", default=3)
+        parser.add_argument("--hybrid-search-fulltext-std-dev-factor", default=1)
         parser.add_argument("--hybrid-search-semantic-score-cutoff", default=0.15)
 
         try:

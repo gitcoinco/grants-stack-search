@@ -78,9 +78,11 @@ async def search(q: str) -> SearchResponse:
     elif query.params.strategy == "fulltext":
         results = data.fulltext_search_engine.search(query.string)
     elif query.params.strategy == "hybrid":
+        semantic_results = data.semantic_search_engine.search(query.string)
+        fulltext_results = data.fulltext_search_engine.search(query.string)
         results = combine_results(
-            semantic_results=data.semantic_search_engine.search(query.string),
-            fulltext_results=data.fulltext_search_engine.search(query.string),
+            semantic_results=semantic_results,
+            fulltext_results=fulltext_results,
             fulltext_std_dev_factor=query.params.hybrid_search_fulltext_std_dev_factor,
             semantic_score_cutoff=query.params.hybrid_search_semantic_score_cutoff,
         )

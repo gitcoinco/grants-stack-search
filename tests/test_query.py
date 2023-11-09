@@ -4,7 +4,7 @@ from src.search_query import SearchQuery
 def test_default_parameters():
     q = SearchQuery("open source")
     assert q.params.strategy == "hybrid"
-    assert q.params.hybrid_search_fulltext_std_dev_factor == 3
+    assert q.params.hybrid_search_fulltext_std_dev_factor == 1
     assert q.params.hybrid_search_semantic_score_cutoff == 0.15
 
 
