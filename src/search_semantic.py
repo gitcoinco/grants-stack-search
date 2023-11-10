@@ -60,7 +60,9 @@ class SemanticSearchEngine(SearchEngine):
 
         self.db.persist()
 
-    def search(self, query_string: str) -> List[SearchEngineResult]:
+    def search(
+        self, query_string: str, min_score: float = 0.35
+    ) -> List[SearchEngineResult]:
         return [
             SearchEngineResult(
                 ref=raw_doc.metadata["application_ref"],
@@ -68,6 +70,8 @@ class SemanticSearchEngine(SearchEngine):
                 type=SearchType.semantic,
             )
             for raw_doc, score in self.db.similarity_search_with_relevance_scores(
-                query_string, k=10
+                query_string,
+                k=100,
             )
+            if score > min_score
         ]

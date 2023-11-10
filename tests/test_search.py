@@ -4,7 +4,7 @@ from src.util import InputDocument
 from src.search import ApplicationSummary, SearchEngineResult, SearchType
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
-from src.search_hybrid import combine_results, get_upper_outliers
+from src.search_hybrid import combine_results
 from tests.conftest import SearchResultsFixture
 from pprint import pprint
 
@@ -44,6 +44,7 @@ def test_persist_and_restore_fulltext_search_index(
     assert application_summaries_by_ref[results[0].ref].name == "Play Art"
 
 
+# TODO replace with search_engines.semantic fixture
 @pytest.mark.skip(
     reason="disabled by default as loading the language model takes a relatively long time"
 )
@@ -56,12 +57,16 @@ def test_semantic_search(
 
     results = ss_engine.search("open source")
 
-    assert len(results) == 10
+    assert len(results) == 100
     assert results[0].ref == "1:0x123:152"
     assert results[0].score == 0.5276312828063965
     assert results[0].type == "semantic"
 
     assert application_summaries_by_ref[results[0].ref].name == "Open Source AI Podcast"
+
+    results = ss_engine.search("open source", min_score=0.6)
+
+    assert len(results) == 0
 
 
 def test_hybrid_search_with_strongly_relevant_keywords(

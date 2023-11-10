@@ -89,27 +89,32 @@ class ApplicationsResponse(BaseModel):
 @app.get("/search")
 async def search(q: str, response: Response) -> SearchResponse:
     try:
-        query = SearchQuery(q)
+        query = SearchQuery(
+            q,
+            default_hybrid_search_fulltext_std_dev_factor=1,
+            default_semantic_score_cutoff=0.15,
+        )
     except Exception as e:
-        logging.error("error parsing query: %s", e)
+        logging.error("Error parsing query: %s", e)
         raise HTTPException(status_code=400, detail=str(e))
 
-    # TODO rename to is_empty?
-    if not query.is_valid:
-        return SearchResponse(results=[])
-
     if query.params.strategy == "semantic":
-        results = data.semantic_search_engine.search(query.string)
+        results = data.semantic_search_engine.search(
+            query.string, min_score=query.params.semantic_score_cutoff
+        )
+
     elif query.params.strategy == "fulltext":
         results = data.fulltext_search_engine.search(query.string)
+
     elif query.params.strategy == "hybrid":
-        semantic_results = data.semantic_search_engine.search(query.string)
+        semantic_results = data.semantic_search_engine.search(
+            query.string, min_score=query.params.semantic_score_cutoff
+        )
         fulltext_results = data.fulltext_search_engine.search(query.string)
         results = combine_results(
             semantic_results=semantic_results,
             fulltext_results=fulltext_results,
             fulltext_std_dev_factor=query.params.hybrid_search_fulltext_std_dev_factor,
-            semantic_score_cutoff=query.params.hybrid_search_semantic_score_cutoff,
         )
     else:
         raise Exception('Unknown strategy: "%s"' % query.params.strategy)
@@ -120,7 +125,7 @@ async def search(q: str, response: Response) -> SearchResponse:
     # Data / reload.
 
     search_results: List[SearchResult] = []
-    for r in results[0 : settings.max_results_per_search_strategy]:
+    for r in results[0 : settings.max_search_results]:
         try:
             search_results.append(
                 SearchResult(
@@ -139,7 +144,7 @@ async def search(q: str, response: Response) -> SearchResponse:
     #             meta=SearchResultMeta(search_type=r.type, search_score=r.score),
     #             data=data.application_summaries_by_ref[r.ref],
     #         )
-    #         for r in results[0 : settings.max_results_per_search_strategy]
+    #         for r in results[0 : settings.max_search_results]
     #     ]
     # )
 

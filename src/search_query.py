@@ -7,19 +7,30 @@ import argparse
 class SearchParams(BaseModel):
     strategy: Union[Literal["fulltext"], Literal["semantic"], Literal["hybrid"]]
     hybrid_search_fulltext_std_dev_factor: int = Field(ge=1, le=5)
-    hybrid_search_semantic_score_cutoff: float = Field(ge=0, lt=1)
+    semantic_score_cutoff: float = Field(ge=0, lt=1)
     keywords: List[str]
 
 
 class SearchQuery:
-    def __init__(self, query_string: str):
+    def __init__(
+        self,
+        query_string: str,
+        default_hybrid_search_fulltext_std_dev_factor=1,
+        default_semantic_score_cutoff=0.15,
+    ):
         self.query_string = query_string
 
         parser = argparse.ArgumentParser()
         parser.add_argument("keywords", nargs="*")
         parser.add_argument("--strategy", default="hybrid")
-        parser.add_argument("--hybrid-search-fulltext-std-dev-factor", default=1)
-        parser.add_argument("--hybrid-search-semantic-score-cutoff", default=0.15)
+        parser.add_argument(
+            "--hybrid-search-fulltext-std-dev-factor",
+            default=default_hybrid_search_fulltext_std_dev_factor,
+        )
+        parser.add_argument(
+            "--semantic-score-cutoff",
+            default=default_semantic_score_cutoff,
+        )
 
         try:
             self.params = SearchParams(
@@ -27,6 +38,9 @@ class SearchQuery:
             )
         except SystemExit:
             raise Exception('Invalid search query: "%s"' % query_string)
+
+        if len(self.params.keywords) == 0:
+            raise Exception("Invalid search query: is empty")
 
     @property
     def string(self) -> str:
