@@ -37,9 +37,9 @@ kill_timeout = "5s"
     soft_limit = 20
     
   [[services.http_checks]]
-    interval = "10s"
-    path = "/status"
-    timeout = "5s"
     grace_period = "30s"
+    interval = "30s"
+    path = "/status"
+    timeout = "10s"
     method = "get"
     protocol = "http"

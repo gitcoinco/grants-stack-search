@@ -1,0 +1,32 @@
+name: Deploy Branch
+
+on:
+  push:
+    branches: [release]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up fly
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Set variables for production
+        run: |
+          echo "DEPLOYMENT_ENVIRONMENT=production" >> $GITHUB_ENV
+          echo "DEPLOYMENT_URL=https://gitcoin-search-dev.fly.dev" >> $GITHUB_ENV          
+        if: ${{ github.ref == 'refs/heads/release' }}
+
+      - name: Build and deploy
+        # TODO test
+        run: |
+          flyctl -c fly.${{ env.DEPLOYMENT_ENVIRONMENT }}.toml deploy --remote-only --env BUILD_TAG=${{ github.sha }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Smoke test
+        run: |
+          curl --silent --show-error --fail-with-body ${{ env.DEPLOYMENT_URL }}/status
