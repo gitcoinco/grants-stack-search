@@ -115,15 +115,33 @@ async def search(q: str, response: Response) -> SearchResponse:
         raise Exception('Unknown strategy: "%s"' % query.params.strategy)
 
     response.headers["Cache-Control"] = f"max-age={settings.cache_max_age_seconds}"
-    return SearchResponse(
-        results=[
-            SearchResult(
-                meta=SearchResultMeta(search_type=r.type, search_score=r.score),
-                data=data.application_summaries_by_ref[r.ref],
+
+    # Debugging intermittent issue. Other half of this is in data.py /
+    # Data / reload.
+
+    search_results: List[SearchResult] = []
+    for r in results[0 : settings.max_results_per_search_strategy]:
+        try:
+            search_results.append(
+                SearchResult(
+                    meta=SearchResultMeta(search_type=r.type, search_score=r.score),
+                    data=data.application_summaries_by_ref[r.ref],
+                )
             )
-            for r in results[0 : settings.max_results_per_search_strategy]
-        ]
-    )
+        except Exception as e:
+            logging.warn("Could not retrieve application %s: %s", r.ref, e)
+
+    return SearchResponse(results=search_results)
+
+    # return SearchResponse(
+    #     results=[
+    #         SearchResult(
+    #             meta=SearchResultMeta(search_type=r.type, search_score=r.score),
+    #             data=data.application_summaries_by_ref[r.ref],
+    #         )
+    #         for r in results[0 : settings.max_results_per_search_strategy]
+    #     ]
+    # )
 
 
 @app.get("/applications")

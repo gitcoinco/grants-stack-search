@@ -204,7 +204,18 @@ class Data:
         # currently only built once on service startup.
 
         with open(path.join(self.storage_dir, "applications.pkl"), "rb") as file:
-            self.application_summaries_by_ref = pickle.load(file)
+            applications = pickle.load(file)
+            if not hasattr(self, "application_summaries_by_ref"):
+                self.application_summaries_by_ref = applications
+            else:
+                if len(applications) != len(self.application_summaries_by_ref):
+                    logging.warn(
+                        "Anomaly detected: freshly reloaded applications have a different count than previous applications. Old: %d, new: %d. Not updating.",
+                        len(self.application_summaries_by_ref),
+                        len(applications),
+                    )
+                else:
+                    self.application_summaries_by_ref = applications
 
         if not hasattr(self, "fulltext_search_engine"):
             self.fulltext_search_engine = FullTextSearchEngine()
