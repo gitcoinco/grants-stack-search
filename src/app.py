@@ -134,4 +134,9 @@ async def get_applications(response: Response) -> ApplicationsResponse:
     )
 
 
+@app.get("/status")
+async def get_status():
+    return {"ok": True}
+
+
 app.mount("/static", StaticFiles(directory="static"), name="static")

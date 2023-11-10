@@ -35,16 +35,11 @@ kill_timeout = "5s"
     type = "connections"
     hard_limit = 25
     soft_limit = 20
-
-  [[services.tcp_checks]]
-    interval = "30s"
-    timeout = "10s"
-    grace_period = "1m0s"
     
-  # [[services.http_checks]]
-  #   interval = "60s"
-  #   grace_period = "1m"
-  #   timeout = "5s"
-  #   method = "get"
-  #   path = "/ping"
-  #   protocol = "http"
+  [[services.http_checks]]
+    interval = "10s"
+    path = "/status"
+    timeout = "5s"
+    grace_period = "30s"
+    method = "get"
+    protocol = "http"
