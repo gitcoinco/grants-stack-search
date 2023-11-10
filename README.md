@@ -14,7 +14,7 @@ Copy `.env.example` to `.env` and customize it.
 
 ## Production setup
 
-Customize env variables in `fly.toml`.
+Customize env variables in `fly.production.toml`.
 
 ## Run service
 
@@ -52,5 +52,5 @@ $ docker buildx build . --platform=linux/amd64 -t gitcoin-search
 Build and deploy to Fly:
 
 ```sh
-$ fly deploy
+$ fly -c fly.production.toml deploy
 ```
