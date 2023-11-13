@@ -37,9 +37,9 @@ def main():
 
     scheduler = BackgroundScheduler()
     scheduler.add_job(
-        update_dataset,
-        "interval",
-        seconds=settings.update_interval_seconds,
+        func=update_dataset,
+        trigger="cron",
+        minute="0,30",
         max_instances=1,
         name="Update applications data",
     )

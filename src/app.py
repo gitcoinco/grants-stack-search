@@ -31,9 +31,9 @@ app = FastAPI()
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
-    lambda: data.reload(),
-    "interval",
-    seconds=settings.reload_interval_seconds,
+    func=data.reload,
+    trigger="cron",
+    minute="5,35",
     max_instances=1,
     name="Reload application data",
 )

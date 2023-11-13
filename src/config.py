@@ -11,8 +11,6 @@ class Settings(BaseSettings):
     bind_address: str = "0.0.0.0"
     auto_reload: bool = False
     indexer_base_url: str = "https://indexer-production.fly.dev"
-    update_interval_seconds: int = 60 * 10
-    reload_interval_seconds: int = 60 * 5
     cache_max_age_seconds: int = 60 * 10
     log_level: (
         Literal["TRACE"]
