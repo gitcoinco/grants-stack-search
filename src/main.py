@@ -68,6 +68,9 @@ def main():
         port=settings.port,
         workers=settings.http_workers,
         reload_includes=["src"],
+        proxy_headers=True,
+        # TODO to prevent spoofing, the following should be set
+        # forwarded_allow_ips=
     )
 
 
