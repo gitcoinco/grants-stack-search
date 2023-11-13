@@ -208,9 +208,9 @@ class Data:
             if not hasattr(self, "application_summaries_by_ref"):
                 self.application_summaries_by_ref = applications
             else:
-                if len(applications) != len(self.application_summaries_by_ref):
+                if len(applications) < len(self.application_summaries_by_ref):
                     logging.warn(
-                        "Anomaly detected: freshly reloaded applications have a different count than previous applications. Old: %d, new: %d. Not updating.",
+                        "Anomaly detected: freshly reloaded applications are fewer than previous applications. Old: %d, new: %d. Not replacing data set.",
                         len(self.application_summaries_by_ref),
                         len(applications),
                     )
