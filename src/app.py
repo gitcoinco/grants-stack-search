@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+from pythonjsonlogger import jsonlogger
 import socket
 import time
 import logging
@@ -7,17 +9,46 @@ from pydantic import BaseModel, Field
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from src.data import Data
-from src.search import ApplicationSummary, SearchResultMeta
+from src.data import Data, ApplicationSummary
+from src.search import SearchResultMeta
 from src.search_hybrid import combine_results
 from src.search_query import SearchQuery
 from src.config import Settings
+from src.util import get_json_log_formatter
 
 ######################################################################
 # CONFIGURATION
 
-settings = Settings()  # type: ignore -- TODO investigate why this is necessary
 HOSTNAME = socket.gethostname()
+
+settings = Settings()  # type: ignore -- TODO investigate why this is necessary
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    json_log_formatter = get_json_log_formatter(
+        hostname=HOSTNAME, deployment_environment=settings.deployment_environment
+    )
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(settings.log_level)
+    root_log_handler = logging.StreamHandler()
+    root_log_handler.setFormatter(json_log_formatter)
+    root_logger.addHandler(root_log_handler)
+
+    class HealthCheckFilter(logging.Filter):
+        def filter(self, record):
+            return record.getMessage().find("GET /health HTTP") == -1
+
+    access_logger = logging.getLogger("uvicorn.access")
+    # Remove existing logger otherwise access messages will be printed twice, once plain, once in json
+    access_logger.handlers.clear()
+    access_log_handler = logging.StreamHandler()
+    access_log_handler.setFormatter(json_log_formatter)
+    access_logger.addHandler(access_log_handler)
+    access_logger.addFilter(HealthCheckFilter())
+
+    yield
 
 
 ######################################################################
@@ -27,7 +58,7 @@ HOSTNAME = socket.gethostname()
 data = Data(settings.storage_dir)
 data.reload()
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(
@@ -95,7 +126,7 @@ async def search(q: str, response: Response) -> SearchResponse:
             default_semantic_score_cutoff=0.15,
         )
     except Exception as e:
-        logging.error("Error parsing query: %s", e)
+        logging.error("Error parsing query '%s': %s", q, e)
         raise HTTPException(status_code=400, detail=str(e))
 
     if query.params.strategy == "semantic":
@@ -134,7 +165,9 @@ async def search(q: str, response: Response) -> SearchResponse:
                 )
             )
         except Exception as e:
-            logging.warn("Could not retrieve application %s: %s", r.ref, e)
+            logging.warn(
+                "Anomaly detected: could not retrieve application %s: %s", r.ref, e
+            )
 
     return SearchResponse(results=search_results)
 
@@ -157,8 +190,8 @@ async def get_applications(response: Response) -> ApplicationsResponse:
     )
 
 
-@app.get("/status")
-async def get_status():
+@app.get("/health")
+async def get_healthcheck():
     return {"ok": True}
 
 

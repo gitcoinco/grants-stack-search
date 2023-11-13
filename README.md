@@ -8,18 +8,14 @@ $ poetry install
 
 **Note**: installation might currently be broken on some systems, see https://github.com/python-poetry/poetry/issues/8458 for workarounds.
 
-## Dev setup
+## Development
 
 Copy `.env.example` to `.env` and customize it.
 
-## Production setup
-
-Customize env variables in `fly.production.toml`.
-
-## Run service
+Run:
 
 ```sh
-poetry run task run
+poetry run task dev
 ```
 
 Useful URLs:
@@ -27,27 +23,27 @@ Useful URLs:
 - a UI testbed http://localhost:8000/static/index.html
 - API docs: http://localhost:8000/docs
 
-## Run tests
-
-One-shot:
+Run tests one-shot:
 
 ```sh
 poetry run task test
 ```
 
-With file watching:
+Run tests continuously:
 
 ```sh
 poetry run task test_watch
 ```
-
-## Build and deploy
 
 Build locally:
 
 ```sh
 $ docker buildx build . --platform=linux/amd64 -t gitcoin-search
 ```
+
+## Production
+
+Customize env variables in `fly.production.toml`.
 
 Build and deploy to Fly:
 

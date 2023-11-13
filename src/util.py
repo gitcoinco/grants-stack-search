@@ -3,6 +3,8 @@ from urllib.parse import urljoin
 from langchain.schema import Document
 from typing import List
 from dataclasses import dataclass
+from pythonjsonlogger import jsonlogger
+from pythonjsonlogger.jsonlogger import JsonFormatter
 
 
 class InvalidInputDocumentException(Exception):
@@ -67,4 +69,18 @@ def get_applications_file_url_from_application_file_locator(
     return urljoin(
         indexer_base_url,
         f"/data/{application_file_locator.chain_id}/rounds/{application_file_locator.round_id}/applications.json",
+    )
+
+
+def get_json_log_formatter(hostname: str, deployment_environment: str) -> JsonFormatter:
+    return jsonlogger.JsonFormatter(
+        # TODO: add `created` as Unix time in milliseconds (the available
+        # `created` field is in milliseconds). Could be done by subclassing
+        # JsonFormatter, see https://stackoverflow.com/a/52933068
+        "[%(levelname)8s] %(message)s %(filename)s:%(lineno)d %(asctime)",
+        rename_fields={"levelname": "level"},
+        static_fields={
+            "hostname": hostname,
+            "service": f"search-{deployment_environment}",
+        },
     )

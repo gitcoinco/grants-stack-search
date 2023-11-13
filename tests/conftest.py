@@ -4,7 +4,8 @@ from typing import List, Dict
 from src.data import InputDocument, deprecated_load_input_documents_from_projects_json
 import pytest
 import logging
-from src.search import ApplicationSummary, SearchEngineResult
+from src.data import ApplicationSummary
+from src.search import SearchEngineResult
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 

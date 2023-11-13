@@ -1,15 +1,26 @@
 import uvicorn
 import logging
+import socket
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from src.config import Settings
-from src.util import parse_applicaton_file_locators
+from src.util import get_json_log_formatter, parse_applicaton_file_locators
 from src.data import Data
 
 
 load_dotenv()
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
-logging.basicConfig(level=settings.log_level, format="%(levelname)s: %(message)s")
+
+logger = logging.getLogger()
+logger.setLevel(settings.log_level)
+logHandler = logging.StreamHandler()
+logHandler.setFormatter(
+    get_json_log_formatter(
+        hostname=socket.gethostname(),
+        deployment_environment=settings.deployment_environment,
+    ),
+)
+logger.addHandler(logHandler)
 
 
 def update_dataset():

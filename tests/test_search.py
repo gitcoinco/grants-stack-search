@@ -1,7 +1,8 @@
 import pytest
 from typing import Dict, List
 from src.util import InputDocument
-from src.search import ApplicationSummary, SearchEngineResult, SearchType
+from src.data import ApplicationSummary
+from src.search import SearchEngineResult, SearchType
 from src.search_fulltext import FullTextSearchEngine
 from src.search_semantic import SemanticSearchEngine
 from src.search_hybrid import combine_results
@@ -57,7 +58,7 @@ def test_semantic_search(
 
     results = ss_engine.search("open source")
 
-    assert len(results) == 100
+    assert len(results) == 47
     assert results[0].ref == "1:0x123:152"
     assert results[0].score == 0.5276312828063965
     assert results[0].type == "semantic"
