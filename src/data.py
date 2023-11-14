@@ -305,7 +305,7 @@ class Data:
         semantic_index_dirname = path.join(storage_dir, "chromadb")
 
         input_documents = load_input_documents_from_file(
-            source_dataset_filename, approved_applications_only=False
+            source_dataset_filename, approved_applications_only=True
         )
 
         application_summaries_by_ref: Dict[str, ApplicationSummary] = {}
