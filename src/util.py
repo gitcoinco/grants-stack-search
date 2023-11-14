@@ -1,7 +1,8 @@
 import re
+from eth_utils.address import to_checksum_address
 from urllib.parse import urljoin
 from langchain.schema import Document
-from typing import List
+from typing import List, Self
 from dataclasses import dataclass
 from pythonjsonlogger import jsonlogger
 from pythonjsonlogger.jsonlogger import JsonFormatter
@@ -37,22 +38,24 @@ class ApplicationFileLocator:
     chain_id: int
     round_id: str
 
+    @classmethod
+    def from_string(cls, application_file_locator_s: str) -> Self:
+        match = re.match(r"^(\d+):(0x[0-9a-fA-F]+)$", application_file_locator_s)
+        if not match:
+            raise Exception(
+                f"Invalid application locator: {application_file_locator_s}"
+            )
 
-def parse_application_file_locator(
-    application_file_locator_s: str,
-) -> ApplicationFileLocator:
-    match = re.match(r"^(\d+):(0x[0-9a-fA-F]+)$", application_file_locator_s)
-    if not match:
-        raise Exception(f"Invalid application locator: {application_file_locator_s}")
-
-    return ApplicationFileLocator(chain_id=int(match.group(1)), round_id=match.group(2))
+        return cls(
+            chain_id=int(match.group(1)), round_id=to_checksum_address(match.group(2))
+        )
 
 
 def parse_applicaton_file_locators(
     application_file_locators_s: str,
 ) -> List[ApplicationFileLocator]:
     return list(
-        map(parse_application_file_locator, application_file_locators_s.split(","))
+        map(ApplicationFileLocator.from_string, application_file_locators_s.split(","))
     )
 
 
