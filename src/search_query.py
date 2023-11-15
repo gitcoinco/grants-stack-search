@@ -16,7 +16,7 @@ class SearchQuery:
         self,
         query_string: str,
         default_hybrid_search_fulltext_std_dev_factor=1,
-        default_semantic_score_cutoff=0.15,
+        default_semantic_score_cutoff=0.35,
     ):
         self.query_string = query_string
 
