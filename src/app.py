@@ -123,7 +123,7 @@ async def search(q: str, response: Response) -> SearchResponse:
         query = SearchQuery(
             q,
             default_hybrid_search_fulltext_std_dev_factor=1,
-            default_semantic_score_cutoff=0.15,
+            default_semantic_score_cutoff=0.35,
         )
     except Exception as e:
         logging.error("Error parsing query '%s': %s", q, e)
