@@ -13,8 +13,7 @@ kill_timeout = "5s"
   BIND_ADDRESS = "0.0.0.0"
   HTTP_WORKERS = "4"
   ANONYMIZED_TELEMETRY = "False"
-  # TODO change for production
-  INDEXER_BASE_URL = "https://indexer-production.fly.dev"
+  INDEXER_BASE_URL = "https://d1lxlknxcoh5cw.cloudfront.net"
   LOG_LEVEL = "DEBUG"
 
 [[services]]
