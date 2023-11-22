@@ -13,7 +13,7 @@ kill_timeout = "5s"
   BIND_ADDRESS = "0.0.0.0"
   HTTP_WORKERS = "4"
   ANONYMIZED_TELEMETRY = "False"
-  INDEXER_BASE_URL = "https://d1lxlknxcoh5cw.cloudfront.net"
+  INDEXER_BASE_URL = "https://grants-stack-indexer.gitcoin.co"
   LOG_LEVEL = "DEBUG"
 
 [[services]]
