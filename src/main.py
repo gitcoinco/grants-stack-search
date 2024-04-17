@@ -12,7 +12,7 @@ load_dotenv()
 settings = Settings()  # type: ignore -- TODO investigate why this is necessary
 
 logger = logging.getLogger()
-logger.setLevel(settings.log_level["INFO"])
+logger.setLevel(settings.log_level)
 logHandler = logging.StreamHandler()
 logHandler.setFormatter(
     get_json_log_formatter(
