@@ -40,7 +40,7 @@ class ApplicationFileLocator:
 
     @classmethod
     def from_string(cls, application_file_locator_s: str) -> Self:
-        match = re.match(r"^(\d+):(0x[0-9a-fA-F]+)$", application_file_locator_s)
+        match = re.match(r"^(\d+):([0-9a-fA-F]+)$", application_file_locator_s)
         if not match:
             raise Exception(
                 f"Invalid application locator: {application_file_locator_s}"
