@@ -43,6 +43,12 @@ $ docker buildx build . --platform=linux/amd64 -t gitcoin-search
 
 ## Production
 
+Run local production build:
+
+```sh
+poetry install --without dev --no-root && rm -rf /tmp/poetry_cache   
+```
+
 Customize env variables in `fly.production.toml`.
 
 Build and deploy to Fly:
