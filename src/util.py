@@ -47,7 +47,7 @@ class ApplicationFileLocator:
             )
 
         return cls(
-            chain_id=int(match.group(1)), round_id=to_checksum_address(match.group(2))
+            chain_id=int(match.group(1)), round_id=match.group(2)
         )
 
 
