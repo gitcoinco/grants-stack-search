@@ -81,6 +81,7 @@ def load_input_documents_from_file(
         metadata["created_at_block"] = record.get("created_at_block")
         metadata["contributor_count"] = record.get("contributor_count")
         metadata["contributions_total_usd"] = record.get("contributions_total_usd")
+        metadata["anchor_address"] = record.get("anchor_address")
 
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
@@ -93,7 +94,7 @@ def load_input_documents_from_file(
     jq_schema = ".[]"
     if approved_applications_only:
         jq_schema += ' | select(.status == "APPROVED")'
-    jq_schema += " | { chain_id: .chainId, round_id: .roundId, round_name: .roundName, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, payout_wallet_address: .metadata.application.recipient, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg, created_at_block: .createdAtBlock, contributions_total_usd: .amountUSD, contributor_count: .uniqueContributors }"
+    jq_schema += " | { chain_id: .chainId, round_id: .roundId, round_name: .roundName, round_application_id: .id, project_id: .projectId, name: .metadata.application.project.title, payout_wallet_address: .metadata.application.recipient, website_url: .metadata.application.project.website, description: .metadata.application.project.description, banner_image_cid: .metadata.application.project.bannerImg, logo_image_cid: .metadata.application.project.logoImg, created_at_block: .createdAtBlock, contributions_total_usd: .amountUSD, contributor_count: .uniqueContributors, anchor_address: .anchorAddress}"
 
     loader = JSONLoader(
         applications_file_path,
@@ -150,6 +151,7 @@ def deprecated_load_input_documents_from_projects_json(
         metadata["created_at_block"] = 123456
         metadata["contributor_count"] = 1
         metadata["contributions_total_usd"] = 100
+        metadata["anchor_address"] = "0x123"
         banner_image_cid = record.get("banner_image_cid")
         if banner_image_cid is not None:
             metadata["banner_image_cid"] = banner_image_cid
@@ -161,7 +163,7 @@ def deprecated_load_input_documents_from_projects_json(
 
     loader = JSONLoader(
         file_path=projects_json_path,
-        jq_schema=".[] | { id, name: .metadata.title, website_url: .metadata.website, description: .metadata.description, banner_image_cid: .metadata.bannerImg, logo_image_cid: .metadata.logoImg }",
+        jq_schema=".[] | { id, name: .metadata.title, website_url: .metadata.website, description: .metadata.description, banner_image_cid: .metadata.bannerImg, logo_image_cid: .metadata.logoImg, anchor_address: .anchorAddress}",
         content_key="description",
         metadata_func=get_json_document_metadata,
         text_content=False,
@@ -198,6 +200,7 @@ class ApplicationSummary(BaseModel):
     created_at_block: int = Field(serialization_alias="createdAtBlock")
     contributor_count: int = Field(serialization_alias="contributorCount")
     contributions_total_usd: float = Field(serialization_alias="contributionsTotalUsd")
+    anchor_address: str = Field(serialization_alias="anchorAddress")
 
     @classmethod
     def from_metadata(cls, metadata: Any) -> Self:
@@ -217,6 +220,7 @@ class ApplicationSummary(BaseModel):
             created_at_block=metadata.get("created_at_block"),
             contributor_count=metadata.get("contributor_count"),
             contributions_total_usd=metadata.get("contributions_total_usd"),
+            anchor_address=metadata.get("anchor_address"),
         )
 
 
